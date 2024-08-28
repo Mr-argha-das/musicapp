@@ -143,7 +143,53 @@ class _HomePageState extends State<HomePage> {
             // By default, show a loading spinner.
             return Center(child: const CircularProgressIndicator());
           },
-        ));
+        ),
+        bottomSheet: Container(
+            height: 60,
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(color: Colors.grey.shade900),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Center(
+                    child: Icon(
+                      Icons.home_mini_outlined,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Icon(
+                      Icons.library_music_outlined,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Center(
+                    child: Icon(
+                      Icons.person_2_outlined,
+                      color: Colors.white,
+                      size: 28,
+                    ),
+                  ),
+                ),
+              ],
+            )));
   }
 }
 
@@ -200,15 +246,23 @@ class _TabsState extends State<Tabs> {
                           return Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: GestureDetector(
-                              onTap: (){
-                                Navigator.push(context, CupertinoPageRoute(builder: (context) => PerticulerSongPage(
-                                  image: snapshot.data!.data[index].image, 
-                                  song: snapshot.data!.data[index].songsaudio,
-                                  id: snapshot.data!.data[index].id.oid,
-                                  name: snapshot.data!.data[index].name,
-                                  singer: snapshot.data!.data[index].singer,
-
-                                  )));
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) =>
+                                            PerticulerSongPage(
+                                              image: snapshot
+                                                  .data!.data[index].image,
+                                              song: snapshot
+                                                  .data!.data[index].songsaudio,
+                                              id: snapshot
+                                                  .data!.data[index].id.oid,
+                                              name: snapshot
+                                                  .data!.data[index].name,
+                                              singer: snapshot
+                                                  .data!.data[index].singer,
+                                            )));
                               },
                               child: Hero(
                                 tag: "${snapshot.data!.data[index].id.oid}",
