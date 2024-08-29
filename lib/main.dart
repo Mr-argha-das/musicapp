@@ -1,7 +1,10 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:musicproject/home/views/home.page.dart';
+
+
 
 Future<void>  main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,7 +13,8 @@ Future<void>  main() async {
     androidNotificationChannelName: 'Audio playback',
     androidNotificationOngoing: true,
   );
-  runApp(AudioServiceWidget(child: const MyApp()));
+ 
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
