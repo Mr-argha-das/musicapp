@@ -1,5 +1,5 @@
 
-import 'package:audioplayers/audioplayers.dart';
+
 import 'package:flutter/material.dart';
 
 class PerticulerSongPage extends StatefulWidget {
@@ -15,18 +15,8 @@ class PerticulerSongPage extends StatefulWidget {
 }
 
 class _PerticulerSongPageState extends State<PerticulerSongPage> {
-  AudioPlayer _audioPlayer = AudioPlayer();
-  void _playAudio() async {
-    String url = "${widget.song}"; // Replace with your MP3 URL
-    await _audioPlayer.play(UrlSource(url));
-    
-  }
+ 
 
-  @override
-  void dispose() {
-    _audioPlayer.dispose();
-    super.dispose();
-  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +45,7 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
         color: Colors.grey.shade900,
         child: Center(
           child: IconButton(onPressed: (){
-            _playAudio();
+           
           },
             icon: Icon(Icons.play_arrow_outlined, color: Colors.white,),),
         ),

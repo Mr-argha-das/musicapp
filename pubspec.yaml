@@ -42,10 +42,11 @@ dependencies:
 
   dio: ^5.6.0
   pretty_dio_logger: ^1.4.0
-  audioplayers: ^6.1.0
-  audioplayers_android: ^5.0.0
   cached_network_image: ^3.4.1
   sqflite: ^2.3.3+1
+  just_audio: ^0.9.40
+  just_audio_background: ^0.0.1-beta.13
+  audio_service: ^0.18.15
 
 
 dev_dependencies:
