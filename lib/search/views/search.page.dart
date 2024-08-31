@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +19,8 @@ class SearchPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchresult = ref.watch(searchResultProvider(_searchController.text));
+    log(_searchController.text);
+    var searchresult = ref.watch(searchResultProvider(" | "));
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -39,26 +42,21 @@ class SearchPage extends ConsumerWidget {
                 color: Colors.white,
               )),
           onChanged: (value) {
-            // if (value == "" || value.isEmpty) {
-            //   setState(() {
-            //     futureAlbum = service.searchsong("%7C");
-            //   });
-            // } else {
-            //   setState(() {
-            //     futureAlbum = service.searchsong(value);
-            //   });
-            // }
+            if (value == "" || value.isEmpty) {
+              
+             searchresult = ref.watch(searchResultProvider("%7C"));
+            } else {
+             searchresult = ref.watch(searchResultProvider(value));
+             
+            }
           },
         ),
       ),
-      body: FutureBuilder(
-          future: ref.watch(searchResultProvider(_searchController.text)),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Padding(
+      body:  searchresult.when(data: (snapshot){
+      return Padding(
                 padding: const EdgeInsets.only(top: 50),
                 child: ListView.builder(
-                    itemCount: snapshot.data!.data.length,
+                    itemCount: snapshot.data.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.only(left: 15.0),
@@ -66,11 +64,11 @@ class SearchPage extends ConsumerWidget {
                           onTap: (){
                             Navigator.push(context, CupertinoPageRoute(builder: (context) => 
                             PeticulerSongScrollable(
-                              image: snapshot.data!.data[index].image, 
-                              song: snapshot.data!.data[index].songsaudio, 
-                              name: snapshot.data!.data[index].name, 
-                              singer: snapshot.data!.data[index].singer, 
-                              id: snapshot.data!.data[index].id.oid)));
+                              image: snapshot.data[index].image, 
+                              song: snapshot.data[index].songsaudio, 
+                              name: snapshot.data[index].name, 
+                              singer: snapshot.data[index].singer, 
+                              id: snapshot.data[index].id.oid)));
 
                           },
                           child: SizedBox(
@@ -92,7 +90,7 @@ class SearchPage extends ConsumerWidget {
                                       height: 70,
                                       width: 70,
                                       fit: BoxFit.cover,
-                                      imageUrl: snapshot.data!.data[index].image,
+                                      imageUrl: snapshot.data[index].image,
                                       placeholder: (context, url) => SizedBox(),
                                       errorWidget: (context, url, error) =>
                                           Icon(Icons.error),
@@ -108,7 +106,7 @@ class SearchPage extends ConsumerWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${snapshot.data!.data[index].name}",
+                                      "${snapshot.data[index].name}",
                                       style: GoogleFonts.montserrat(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -118,7 +116,7 @@ class SearchPage extends ConsumerWidget {
                                       height: 2,
                                     ),
                                     Text(
-                                      "${snapshot.data!.data[index].singer}",
+                                      "${snapshot.data[index].singer}",
                                       style: GoogleFonts.montserrat(
                                           color: Colors.white,
                                           fontWeight: FontWeight.w400,
@@ -136,13 +134,8 @@ class SearchPage extends ConsumerWidget {
                       );
                     }),
               );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          })
+
+      }, error: (error, stack) => Center(child: Text('Error: $error')), loading:  () => const Center(child: CircularProgressIndicator())),
     );
   }
 }
