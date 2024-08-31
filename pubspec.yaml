@@ -47,6 +47,8 @@ dependencies:
   just_audio: ^0.9.40
   just_audio_background: ^0.0.1-beta.13
   audio_service: ^0.18.15
+  triangle_seekbar: ^0.0.1
+  flutter_riverpod: ^2.5.1
 
 
 dev_dependencies:

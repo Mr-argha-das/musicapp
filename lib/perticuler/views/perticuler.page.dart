@@ -1,9 +1,97 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:just_audio/just_audio.dart';
-import 'package:musicproject/main.dart';
+import 'package:musicproject/config/pretty.dio.dart';
+
 import 'package:musicproject/perticuler/service/song.play.service.dart';
+import 'package:musicproject/search/models/search.model.dart';
+import 'package:musicproject/search/service/search.service.dart';
+import 'package:triangle_seekbar/triangle_seekbar.dart';
+
+
+
+
+
+
+class PeticulerSongScrollable extends StatefulWidget {
+  final String id;
+  final String image;
+  final String song;
+  final String name;
+  final String singer;
+  const PeticulerSongScrollable({super.key, required this.id, required this.image, required this.song, required this.name, required this.singer});
+
+  @override
+  State<PeticulerSongScrollable> createState() => _PeticulerSongScrollableState();
+}
+
+class _PeticulerSongScrollableState extends State<PeticulerSongScrollable> {
+  final service = SearchService(createDio());
+  late Future<SearchResultModel> futureAlbum;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    futureAlbum = service.searchsong("%7C");
+    futureAlbum.then((value){
+    setState(() {
+      value.data.insert(0, Datum(
+      id: Id(oid: ""), 
+      name: widget.name, 
+      image: widget.image, 
+      songsaudio: widget.song, 
+      singer: widget.singer));
+    });
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+     backgroundColor: Colors.black,
+     body: FutureBuilder(future: futureAlbum, builder: (context, snapshot){
+      if(snapshot.hasData){
+        return PageView.builder(
+        scrollDirection: Axis.vertical,
+      itemCount: snapshot.data!.data.length,
+      itemBuilder: (context, index){
+      return PerticulerSongPage(
+        image: "${snapshot.data!.data[index].image}", 
+        song: "${snapshot.data!.data[index].songsaudio}", 
+        name: "${snapshot.data!.data[index].name}", 
+        singer: "${snapshot.data!.data[index].singer}", 
+        id: "${snapshot.data!.data[index].id.oid}");
+     });
+      }else if(snapshot.hasError){
+        return Center(
+          child: Text("${snapshot.error}"),
+        );
+      }
+      return Center(child: CircularProgressIndicator(),);
+     })
+    );
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class PerticulerSongPage extends StatefulWidget {
   final String id;
@@ -25,6 +113,33 @@ class PerticulerSongPage extends StatefulWidget {
 
 class _PerticulerSongPageState extends State<PerticulerSongPage> {
   bool _isplaying = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    SongService.player.durationStream.listen((duration) {
+      setState(() {
+        SongService.duration = duration ?? Duration.zero;
+      });
+    });
+
+    // Listen to the position of the audio
+    SongService.player.positionStream.listen((position) {
+      setState(() {
+        SongService.position = position;
+      });
+    });
+    _isplaying = true;
+    final mediaItem = MediaItem(
+      id: '${widget.song}',
+      album: '',
+      title: '${widget.name}',
+      artist: '${widget.singer}',
+      artUri: Uri.parse('${widget.image}'),
+    );
+    SongService.playSong(mediaItem, "${widget.song}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +163,7 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Container(
-                    height: 200,
+                    height: 250,
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
                         color: Colors.black54,
@@ -117,18 +232,9 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
                                           _isplaying = !_isplaying;
                                         });
                                         if (_isplaying == true) {
-                                          final mediaItem = MediaItem(
-                                            id: '${widget.song}',
-                                            album: '',
-                                            title: '${widget.name}',
-                                            artist: '${widget.singer}',
-                                            artUri:
-                                                Uri.parse('${widget.image}'),
-                                          );
-                                          SongService.playSong(
-                                              mediaItem, "${widget.song}");
+                                          SongService.ruseme();
                                         } else {
-                                          SongService.stopSong();
+                                          SongService.pause();
                                         }
                                       },
                                       child: Icon(
@@ -158,7 +264,18 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
                               ))
                             ],
                           ),
-                        )
+                        ),
+                        // Slider(
+                        //   min: 0,
+                        //   max: SongService.duration.inMilliseconds.toDouble(),
+                        //   value: SongService.position.inMilliseconds.toDouble()-1,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       SongService.player
+                        //           .seek(Duration(milliseconds: value.toInt()));
+                        //     });
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
@@ -173,30 +290,3 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
 }
 
 
-// bottomSheet: Container(
-//         height: 50,
-//         color: Colors.grey.shade900,
-//         child: Center(
-//           child: IconButton(
-//             onPressed: () async {
-//               // Define the playlist
-// //               
-
-// // // Creating an AudioSource with MediaItem as tag
-// //               final audioSource = AudioSource.uri(
-// //                 Uri.parse('${widget.song}'),
-// //                 tag: mediaItem,
-// //               );
-// //               final player = AudioPlayer(); // Create a player
-// // // Adding the AudioSource to the player
-// //               await player.setVolume(100);
-// //               await player.setAudioSource(audioSource);
-// //               await player.play();
-//             },
-//             icon: const Icon(
-//               Icons.play_arrow_outlined,
-//               color: Colors.white,
-//             ),
-//           ),
-//         ),
-      // ),

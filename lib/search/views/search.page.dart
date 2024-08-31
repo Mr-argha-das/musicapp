@@ -1,36 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musicproject/config/pretty.dio.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
 import 'package:musicproject/search/models/search.model.dart';
+import 'package:musicproject/search/service/search.controller.dart';
 import 'package:musicproject/search/service/search.service.dart';
 
-class SearchPage extends StatefulWidget {
-  const SearchPage({super.key});
+class SearchPage extends ConsumerWidget {
+ SearchPage({super.key});
+
+  // final service = SearchService(createDio());
+  final _searchController = TextEditingController();
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
-}
-
-class _SearchPageState extends State<SearchPage> {
-  final service = SearchService(createDio());
-  late Future<SearchResultModel> futureAlbum;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    futureAlbum = service.searchsong("%7C");
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final searchresult = ref.watch(searchResultProvider(_searchController.text));
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: const Color.fromRGBO(0, 0, 0, 1),
         title: TextFormField(
+          controller: _searchController,
           style: GoogleFonts.montserrat(color: Colors.white),
           decoration: InputDecoration(
               fillColor: Colors.grey.shade900,
@@ -46,20 +39,20 @@ class _SearchPageState extends State<SearchPage> {
                 color: Colors.white,
               )),
           onChanged: (value) {
-            if (value == "" || value.isEmpty) {
-              setState(() {
-                futureAlbum = service.searchsong("%7C");
-              });
-            } else {
-              setState(() {
-                futureAlbum = service.searchsong(value);
-              });
-            }
+            // if (value == "" || value.isEmpty) {
+            //   setState(() {
+            //     futureAlbum = service.searchsong("%7C");
+            //   });
+            // } else {
+            //   setState(() {
+            //     futureAlbum = service.searchsong(value);
+            //   });
+            // }
           },
         ),
       ),
-      body: FutureBuilder<SearchResultModel>(
-          future: futureAlbum,
+      body: FutureBuilder(
+          future: ref.watch(searchResultProvider(_searchController.text)),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               return Padding(
@@ -72,12 +65,13 @@ class _SearchPageState extends State<SearchPage> {
                         child: GestureDetector(
                           onTap: (){
                             Navigator.push(context, CupertinoPageRoute(builder: (context) => 
-                            PerticulerSongPage(
+                            PeticulerSongScrollable(
                               image: snapshot.data!.data[index].image, 
                               song: snapshot.data!.data[index].songsaudio, 
                               name: snapshot.data!.data[index].name, 
                               singer: snapshot.data!.data[index].singer, 
                               id: snapshot.data!.data[index].id.oid)));
+
                           },
                           child: SizedBox(
                             height: 80,
@@ -148,7 +142,8 @@ class _SearchPageState extends State<SearchPage> {
             return const Center(
               child: CircularProgressIndicator(),
             );
-          }),
+          })
     );
   }
 }
+
