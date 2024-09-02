@@ -261,44 +261,56 @@ class AlboumFavourite extends StatelessWidget {
       crossAxisSpacing: 15,
       mainAxisSpacing: 10,
       itemBuilder: (context, index) {
-        return Container(
-          width: (MediaQuery.of(context).size.width / 2) -
-              12, // Half the screen width minus padding
-          height: MediaQuery.of(context).size.height * .06,
-          decoration: BoxDecoration(
-            color: Colors.grey.shade900,
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.width * .15,
-                width: MediaQuery.of(context).size.width * .15,
-                decoration: const BoxDecoration(
-                    color: Colors.purple,
-                    borderRadius:
-                        BorderRadius.only(topLeft: Radius.circular(4))),
-                child: CachedNetworkImage(
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                CupertinoPageRoute(
+                    builder: (context) => PeticulerSongScrollable(
+                        image: songslist[index].image,
+                        song: songslist[index].songsaudio,
+                        name: songslist[index].name,
+                        singer: songslist[index].singer,
+                        id: songslist[index].id.oid)));
+          },
+          child: Container(
+            width: (MediaQuery.of(context).size.width / 2) -
+                12, // Half the screen width minus padding
+            height: MediaQuery.of(context).size.height * .06,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade900,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
                   height: MediaQuery.of(context).size.width * .15,
                   width: MediaQuery.of(context).size.width * .15,
-                  fit: BoxFit.cover,
-                  imageUrl: songslist[index + 1].image,
-                  placeholder: (context, url) => SizedBox(),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  decoration: const BoxDecoration(
+                      color: Colors.purple,
+                      borderRadius:
+                          BorderRadius.only(topLeft: Radius.circular(4))),
+                  child: CachedNetworkImage(
+                    height: MediaQuery.of(context).size.width * .15,
+                    width: MediaQuery.of(context).size.width * .15,
+                    fit: BoxFit.cover,
+                    imageUrl: songslist[index].image,
+                    placeholder: (context, url) => SizedBox(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                  ),
                 ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 5, left: 10),
-                  child: Text(songslist[index].name,
-                        textAlign: TextAlign.left,
-                        overflow: TextOverflow.fade,
-                        style: GoogleFonts.montserrat(color: Colors.white))
-                ),
-              )
-            ],
+                Expanded(
+                  child: Padding(
+                      padding: EdgeInsets.only(top: 5, left: 10),
+                      child: Text(songslist[index].name,
+                          textAlign: TextAlign.left,
+                          overflow: TextOverflow.fade,
+                          style: GoogleFonts.montserrat(color: Colors.white))),
+                )
+              ],
+            ),
           ),
         );
       },

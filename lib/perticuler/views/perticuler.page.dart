@@ -1,17 +1,12 @@
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musicproject/config/pretty.dio.dart';
 
-import 'package:musicproject/perticuler/service/song.play.service.dart';
+import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/search/models/search.model.dart';
 import 'package:musicproject/search/service/search.service.dart';
-import 'package:triangle_seekbar/triangle_seekbar.dart';
-
-
-
-
-
 
 class PeticulerSongScrollable extends StatefulWidget {
   final String id;
@@ -19,10 +14,17 @@ class PeticulerSongScrollable extends StatefulWidget {
   final String song;
   final String name;
   final String singer;
-  const PeticulerSongScrollable({super.key, required this.id, required this.image, required this.song, required this.name, required this.singer});
+  const PeticulerSongScrollable(
+      {super.key,
+      required this.id,
+      required this.image,
+      required this.song,
+      required this.name,
+      required this.singer});
 
   @override
-  State<PeticulerSongScrollable> createState() => _PeticulerSongScrollableState();
+  State<PeticulerSongScrollable> createState() =>
+      _PeticulerSongScrollableState();
 }
 
 class _PeticulerSongScrollableState extends State<PeticulerSongScrollable> {
@@ -33,67 +35,52 @@ class _PeticulerSongScrollableState extends State<PeticulerSongScrollable> {
     // TODO: implement initState
     super.initState();
     futureAlbum = service.searchsong("%7C");
-    futureAlbum.then((value){
-    setState(() {
-      value.data.insert(0, Datum(
-      id: Id(oid: ""), 
-      name: widget.name, 
-      image: widget.image, 
-      songsaudio: widget.song, 
-      singer: widget.singer));
-    });
+    futureAlbum.then((value) {
+      setState(() {
+        value.data.insert(
+            0,
+            Datum(
+                id: Id(oid: ""),
+                name: widget.name,
+                image: widget.image,
+                songsaudio: widget.song,
+                singer: widget.singer));
+      });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     backgroundColor: Colors.black,
-     body: FutureBuilder(future: futureAlbum, builder: (context, snapshot){
-      if(snapshot.hasData){
-        return PageView.builder(
-        scrollDirection: Axis.vertical,
-      itemCount: snapshot.data!.data.length,
-      itemBuilder: (context, index){
-      return PerticulerSongPage(
-        image: "${snapshot.data!.data[index].image}", 
-        song: "${snapshot.data!.data[index].songsaudio}", 
-        name: "${snapshot.data!.data[index].name}", 
-        singer: "${snapshot.data!.data[index].singer}", 
-        id: "${snapshot.data!.data[index].id.oid}");
-     });
-      }else if(snapshot.hasError){
-        return Center(
-          child: Text("${snapshot.error}"),
-        );
-      }
-      return Center(child: CircularProgressIndicator(),);
-     })
-    );
+        backgroundColor: Colors.black,
+        body: FutureBuilder(
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return PageView.builder(
+                    scrollDirection: Axis.vertical,
+                    itemCount: snapshot.data!.data.length,
+                    itemBuilder: (context, index) {
+                      return PerticulerSongPage(
+                          image: "${snapshot.data!.data[index].image}",
+                          song: "${snapshot.data!.data[index].songsaudio}",
+                          name: "${snapshot.data!.data[index].name}",
+                          singer: "${snapshot.data!.data[index].singer}",
+                          id: "${snapshot.data!.data[index].id.oid}");
+                    });
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text("${snapshot.error}"),
+                );
+              }
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }));
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class PerticulerSongPage extends StatefulWidget {
+class PerticulerSongPage extends ConsumerStatefulWidget {
   final String id;
   final String image;
   final String song;
@@ -108,10 +95,10 @@ class PerticulerSongPage extends StatefulWidget {
       required this.id});
 
   @override
-  State<PerticulerSongPage> createState() => _PerticulerSongPageState();
+  _PerticulerSongPageState createState() => _PerticulerSongPageState();
 }
 
-class _PerticulerSongPageState extends State<PerticulerSongPage> {
+class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
   bool _isplaying = false;
   @override
   void initState() {
@@ -137,11 +124,30 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
       artist: '${widget.singer}',
       artUri: Uri.parse('${widget.image}'),
     );
+    
     SongService.playSong(mediaItem, "${widget.song}");
+    setData();
+  }
+
+  void setData(){
+    setState(() {
+      StoreSong.image = widget.image;
+      StoreSong.name = widget.name;
+      StoreSong.singer = widget.singer;
+      StoreSong.song = widget.song;
+      StoreSong.isplaying = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final songResult = ref.watch(songControllerSetSong(CurrentSongModel(
+        isplaying: true,
+        singer: widget.singer,
+        id: widget.song,
+        image: widget.singer,
+        song: widget.song,
+        name: widget.name)));
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -288,5 +294,3 @@ class _PerticulerSongPageState extends State<PerticulerSongPage> {
     );
   }
 }
-
-
