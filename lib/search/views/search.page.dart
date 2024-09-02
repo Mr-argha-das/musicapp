@@ -266,7 +266,7 @@ class AlboumFavourite extends StatelessWidget {
               12, // Half the screen width minus padding
           height: MediaQuery.of(context).size.height * .06,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 57, 56, 56),
+            color: Colors.grey.shade900,
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -276,7 +276,7 @@ class AlboumFavourite extends StatelessWidget {
               Container(
                 height: MediaQuery.of(context).size.width * .15,
                 width: MediaQuery.of(context).size.width * .15,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                     color: Colors.purple,
                     borderRadius:
                         BorderRadius.only(topLeft: Radius.circular(4))),
@@ -291,13 +291,11 @@ class AlboumFavourite extends StatelessWidget {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 5),
-                  child: Center(
-                    child: Text(songslist[index + 1].name,
+                  padding: EdgeInsets.only(top: 5, left: 10),
+                  child: Text(songslist[index].name,
                         textAlign: TextAlign.left,
-                        overflow: TextOverflow.clip,
-                        style: TextStyle(color: Colors.white)),
-                  ),
+                        overflow: TextOverflow.fade,
+                        style: GoogleFonts.montserrat(color: Colors.white))
                 ),
               )
             ],

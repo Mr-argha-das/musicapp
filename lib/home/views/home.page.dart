@@ -111,7 +111,7 @@ class HomeSection extends ConsumerStatefulWidget {
   _HomeSectionState createState() => _HomeSectionState();
 }
 
-class _HomeSectionState extends ConsumerState<HomeSection> with HomeController {
+class _HomeSectionState extends ConsumerState<HomeSection>  {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
@@ -455,7 +455,7 @@ class SongsBySingerTab extends ConsumerStatefulWidget {
 }
 
 class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab>
-    with HomeController {
+     {
   @override
   Widget build(BuildContext context) {
     final double height = MediaQuery.of(context).size.height;
