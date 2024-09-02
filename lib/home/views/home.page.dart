@@ -1,29 +1,27 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:musicproject/config/pretty.dio.dart';
-import 'package:musicproject/home/moodels/singer.model.dart';
 import 'package:musicproject/home/moodels/song.search.model.dart';
-import 'package:musicproject/home/moodels/songs.model.dart';
-import 'package:musicproject/home/service/home.service.dart';
+import 'package:musicproject/home/controller/home.controller.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
+import 'package:musicproject/recommended.dart/Likemore.dart';
+import 'package:musicproject/recommended.dart/SlowRock.dart';
+import 'package:musicproject/recommended.dart/albumList.dart';
+import 'package:musicproject/recommended.dart/artistList.dart';
+import 'package:musicproject/recommended.dart/recommended.dart';
 import 'package:musicproject/search/views/search.page.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  int pageIndex =0 ;
-  List<Widget> pages = [
-    HomeSection(),
-    SearchPage()
-  ];
+class _HomePageState extends ConsumerState<HomePage> {
+  int pageIndex = 0;
+  List<Widget> pages = [const HomeSection(), const SearchPage()];
 
   @override
   Widget build(BuildContext context) {
@@ -39,26 +37,25 @@ class _HomePageState extends State<HomePage> {
                 color: Colors.grey.shade900,
                 boxShadow: const [
                   BoxShadow(
-                    color: Colors.black87,
-                    offset: Offset(4, 4),
-                    spreadRadius: 1,
-                    blurRadius: 12
-                  )
+                      color: Colors.black87,
+                      offset: Offset(4, 4),
+                      spreadRadius: 1,
+                      blurRadius: 12)
                 ],
                 borderRadius: BorderRadius.circular(500)),
-            child:  Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Center(
                     child: GestureDetector(
-                      onTap: (){
+                      onTap: () {
                         setState(() {
                           pageIndex = 0;
                         });
                       },
-                      child: Icon(
+                      child: const Icon(
                         Icons.home_mini_outlined,
                         color: Colors.white,
                         size: 28,
@@ -69,8 +66,8 @@ class _HomePageState extends State<HomePage> {
                 Expanded(
                   child: Center(
                     child: GestureDetector(
-                      onTap: (){
-                         setState(() {
+                      onTap: () {
+                        setState(() {
                           pageIndex = 1;
                         });
                       },
@@ -107,245 +104,431 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-
-
-class HomeSection extends StatefulWidget {
+class HomeSection extends ConsumerStatefulWidget {
   const HomeSection({super.key});
 
   @override
-  State<HomeSection> createState() => _HomeSectionState();
+  _HomeSectionState createState() => _HomeSectionState();
 }
 
-class _HomeSectionState extends State<HomeSection> {
-  final service = HomeSerivce(createDio());
-  late Future<SingerModel> futureAlbum;
-
- 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    futureAlbum = service.singerList();
-  }
+class _HomeSectionState extends ConsumerState<HomeSection> with HomeController {
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<SingerModel>(
-        future: futureAlbum,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  new SizedBox(
-                    height: 100,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Soome Playlist",
-                      style: GoogleFonts.bodoniModa(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 190,
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                        itemCount: 5,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: 150,
-                              width: 180,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(10),
-                                  border: Border.all(
-                                      color: Colors.black, width: 2)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(1.0),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                              child: Container(
-                                            color: Colors.blue,
-                                          )),
-                                          Expanded(
-                                              child: Container(
-                                            color: Colors.black,
-                                          ))
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                              child: Container(
-                                            color: Colors.yellow,
-                                          )),
-                                          Expanded(
-                                              child: Container(
-                                            color: Colors.green,
-                                          ))
-                                        ],
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                  ),
-                  ListView.builder(
-                      itemCount: snapshot.data!.data.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        if (snapshot.data?.data[index] != null) {
-                          return Tabs(
-                              singername:
-                                  snapshot.data!.data[index].toString());
-                        }
-                      }),
-                ],
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Text('${snapshot.error}');
-          }
-
-          // By default, show a loading spinner.
-          return const Center(child: CircularProgressIndicator());
-        },
-      );
-  }
-}
-
-
-class Tabs extends StatefulWidget {
-  final String singername;
-  const Tabs({super.key, required this.singername});
-
-  @override
-  State<Tabs> createState() => _TabsState();
-}
-
-class _TabsState extends State<Tabs> {
-  final service = HomeSerivce(createDio());
-  late Future<SongsBySingerModel> futureAlbum;
-  @override
-  void initState() {
-    super.initState();
-    futureAlbum =
-        service.getSong(SongsBySingerModelbody(singername: widget.singername));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    log(widget.singername);
-    return FutureBuilder<SongsBySingerModel>(
-      future: futureAlbum,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          return Padding(
-            padding: const EdgeInsets.only(top: 20),
-            child: SizedBox(
-              width: MediaQuery.of(context).size.width - 20,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      widget.singername,
-                      style: GoogleFonts.bodoniModa(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 30),
-                    ),
-                  ),
-                  new SizedBox(
-                    height: 200,
-                    width: MediaQuery.of(context).size.width,
-                    child: ListView.builder(
-                        itemCount: snapshot.data!.data.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) =>
-                                            PerticulerSongPage(
-                                              image: snapshot
-                                                  .data!.data[index].image,
-                                              song: snapshot
-                                                  .data!.data[index].songsaudio,
-                                              id: snapshot
-                                                  .data!.data[index].id.oid,
-                                              name: snapshot
-                                                  .data!.data[index].name,
-                                              singer: snapshot
-                                                  .data!.data[index].singer,
-                                            )));
-                              },
-                              child: Hero(
-                                tag: "${snapshot.data!.data[index].id.oid}",
-                                child: Container(
-                                  height: 150,
-                                  width: 180,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey.shade900,
-                                      borderRadius: BorderRadius.circular(10),
-                                      image: DecorationImage(
-                                          image: NetworkImage(
-                                            snapshot.data!.data[index].image,
-                                          ),
-                                          fit: BoxFit.cover)),
-                                ),
-                              ),
-                            ),
-                          );
-                        }),
-                  )
-                ],
-              ),
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+    final _singerResult = ref.watch(homeSingerProvider);
+    return Scaffold(
+      backgroundColor: Colors.black,
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: ListTile(
+          leading: const Icon(
+            Icons.menu_open_outlined,
+            color: Colors.white,
+            size: 30,
+          ),
+          trailing: GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                    builder: (context) => const SearchPage(),
+                  ));
+            },
+            child: const Icon(
+              Icons.search,
+              color: Colors.white,
+              size: 30,
             ),
-          );
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        }
-
-        // By default, show a loading spinner.
-        return SizedBox();
-      },
+          ),
+        ),
+      ),
+      body: _singerResult.when(data: (snapshot) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Container(
+                  height: height * 0.10,
+                  width: width * 0.9,
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 50,
+                          width: 50,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 15),
+                          child: Text(
+                            "Hey Hey Hey",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+                child: Container(
+                  height: height * 0.12,
+                  width: width * 0.9,
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 203, 190, 190),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          height: 60,
+                          width: 60,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: SizedBox(
+                            height: height * 0.12,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Despacito",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: width *
+                                              0.05, // responsive font size
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        "Luis Fonsi",
+                                        style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: width *
+                                              0.04, // responsive font size
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.keyboard_double_arrow_left_sharp,
+                                      color: Colors.black,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Container(
+                                  height: 50,
+                                  width: 50,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.arrow_right_rounded,
+                                      color: Colors.black,
+                                      size: 50,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 5),
+                                Container(
+                                  height: 30,
+                                  width: 30,
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Colors.white,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.keyboard_double_arrow_right_sharp,
+                                      color: Colors.black,
+                                      size: 25,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Your favourite artists",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: width * 0.05, // responsive font size
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_double_arrow_right_outlined,
+                      color: Colors.blue.shade700,
+                      size: width * 0.07, // responsive icon size
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                height: height * 0.22,
+                width: width,
+                decoration: const BoxDecoration(color: Colors.black),
+                child: Artists(
+                  singernames: snapshot.data,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Now Released",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: width * 0.05, // responsive font size
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_double_arrow_right_outlined,
+                      color: Colors.blue.shade700,
+                      size: width * 0.07, // responsive icon size
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                height: height * 0.20,
+                width: width,
+                decoration: const BoxDecoration(color: Colors.black),
+                child: const AlbumList(),
+              ),
+              const SizedBox(height: 20),
+              ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                children: snapshot.data
+                    .map((item) => SongsBySingerTab(
+                          singerName: item,
+                        ))
+                    .toList(),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Recommended for today",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: width * 0.05, // responsive font size
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_double_arrow_right_outlined,
+                      color: Colors.blue.shade700,
+                      size: width * 0.07, // responsive icon size
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                height: height * 0.22,
+                width: width,
+                decoration: const BoxDecoration(color: Colors.black),
+                child: const Recommended(),
+              ),
+              const SizedBox(height: 20),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Slow Rock",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: width * 0.05, // responsive font size
+                      ),
+                    ),
+                    Icon(
+                      Icons.keyboard_double_arrow_right_outlined,
+                      color: Colors.blue.shade700,
+                      size: width * 0.07, // responsive icon size
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              Container(
+                height: MediaQuery.of(context)
+                    .size
+                    .height, // Adjusted height for better fit
+                width: width,
+                decoration: const BoxDecoration(color: Colors.black),
+                child: const SlowRock(),
+              ),
+            ],
+          ),
+        );
+      }, error: (err, stack) {
+        return Center(
+          child: Text("${err.toString()}"),
+        );
+      }, loading: () {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }),
     );
   }
 }
 
+class SongsBySingerTab extends ConsumerStatefulWidget {
+  final String singerName;
+  const SongsBySingerTab({super.key, required this.singerName});
 
+  @override
+  _SongsBySingerTabState createState() => _SongsBySingerTabState();
+}
+
+class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab>
+    with HomeController {
+  @override
+  Widget build(BuildContext context) {
+    final double height = MediaQuery.of(context).size.height;
+    final double width = MediaQuery.of(context).size.width;
+    final _songsSingerResult = ref.watch(homeSingerSongsProvide(
+        SongsBySingerModelbody(singername: widget.singerName)));
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 45,
+                width: 45,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Text(
+                    "${widget.singerName[0]}",
+                    style: TextStyle(color: Colors.black, fontSize: 24),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    new Text(
+                      "More like",
+                      style: TextStyle(
+                        color: Color.fromARGB(255, 202, 192, 192),
+                        fontSize: 10,
+                      ),
+                    ),
+                    Text(
+                      "${widget.singerName}",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        _songsSingerResult.when(data: (data) {
+          return Container(
+            height: height * 0.20,
+            width: width,
+            decoration: const BoxDecoration(color: Colors.black),
+            child:  MoreLike(songslist: data.data,),
+          );
+        }, loading: () {
+          return SizedBox();
+        }, error: (err, stack) {
+          return Center(
+            child: Text(err.toString()),
+          );
+        }),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+}
