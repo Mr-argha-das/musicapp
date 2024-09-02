@@ -55,7 +55,7 @@ class MoreLike extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(
                           15), // Rounded corners for the image
-                      color: Colors.white,
+                      color: Colors.grey.shade900,
                     ),
                     child: Center(
                       child: CachedNetworkImage(

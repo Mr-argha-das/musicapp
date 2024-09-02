@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:musicproject/recommended.dart/random.collor.dart';
 
 class Artists extends StatelessWidget {
   final List<String> singernames;
@@ -33,16 +34,17 @@ class Artists extends StatelessWidget {
               Container(
                 height: itemWidth * 0.90, // Circle size based on item width
                 width: itemWidth * 0.90,
-                decoration: const BoxDecoration(
+                decoration:  BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white,
+                  color: generateRandomSoftColor(),
                 ),
                 child: Center(
                   child: Text(
                     "${singernames[index][0]}",
                     style: TextStyle(
                       fontSize: itemWidth * 0.65, // Responsive font size
-                      color: Colors.black,
+                      color: getContrastingTextColor(
+                                          generateRandomSoftColor()),
                     ),
                   ),
                 ),

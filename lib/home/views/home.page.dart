@@ -126,6 +126,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
 
     return Scaffold(
       backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
@@ -254,15 +255,17 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                   GestureDetector(
                                     onTap: () {
                                       if (StoreSong.isplaying == true) {
-                                        SongService.pause();
                                         setState(() {
                                           StoreSong.isplaying = false;
                                         });
+                                        SongService.pause();
+                                        
                                       } else {
-                                        SongService.ruseme();
                                         setState(() {
                                           StoreSong.isplaying = true;
                                         });
+                                        SongService.ruseme();
+                                        
                                       }
                                     },
                                     child: Container(
@@ -318,14 +321,14 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
               //   ),
               // ),
               const SizedBox(height: 20),
-              // Container(
-              //   height: height * 0.22,
-              //   width: width,
-              //   decoration: const BoxDecoration(color: Colors.black),
-              //   child: Artists(
-              //     singernames: snapshot.data,
-              //   ),
-              // ),
+              Container(
+                height: height * 0.22,
+                width: width,
+                decoration: const BoxDecoration(color: Colors.black),
+                child: Artists(
+                  singernames: snapshot.data,
+                ),
+              ),
               // Padding(
               //   padding: const EdgeInsets.symmetric(horizontal: 15),
               //   child: Row(
