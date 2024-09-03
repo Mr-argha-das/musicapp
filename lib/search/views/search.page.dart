@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
+import 'package:musicproject/recommended.dart/random.collor.dart';
 import 'package:musicproject/search/controller/search.controller.dart';
 
 import '../models/search.model.dart';
@@ -338,7 +339,7 @@ class BrowseChoise extends StatelessWidget {
           height: MediaQuery.of(context).size.height * 0.12,
           width: (MediaQuery.of(context).size.width / 2) - 12,
           decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 57, 56, 56),
+            color: generateRandomSoftColor(),
             borderRadius: BorderRadius.circular(4),
           ),
           child: Row(
@@ -352,7 +353,10 @@ class BrowseChoise extends StatelessWidget {
                   children: [
                     Text(
                       'Hindi',
-                      style: TextStyle(color: Colors.white, fontSize: 18),
+                      style: TextStyle(
+                          color: getContrastingTextColor(
+                              generateRandomSoftColor()),
+                          fontSize: 18),
                     ),
                   ],
                 ),
@@ -362,19 +366,26 @@ class BrowseChoise extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.end,
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
-                    Transform.rotate(
-                      angle:
-                          0.5, // Rotation angle in radians (e.g., 0.5 radians ~ 28.6 degrees)
-                      child: Container(
-                        width: 70,
-                        height: 70,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.white, width: 2),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Transform.rotate(
+                          angle:
+                              0.5, // Rotation angle in radians (e.g., 0.5 radians ~ 28.6 degrees)
+                          child: Container(
+                            width: 70,
+                            height: 70,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.white, width: 2),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                        SizedBox(width: 20,)
+                      ],
+                    )
                   ],
                 ),
               ),

@@ -49,6 +49,8 @@ class CurrentSongModel {
       required this.name});
 }
 
+final dataProvider = StateProvider<CurrentSongModel? >((ref) => null);
+
 final songControllerSetSong =
     FutureProvider.family<CurrentSongModel?, CurrentSongModel?>(
         (ref, body) async {

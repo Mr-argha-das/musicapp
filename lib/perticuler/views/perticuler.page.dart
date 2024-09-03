@@ -8,7 +8,7 @@ import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/search/models/search.model.dart';
 import 'package:musicproject/search/service/search.service.dart';
 
-class PeticulerSongScrollable extends StatefulWidget {
+class PeticulerSongScrollable extends ConsumerStatefulWidget {
   final String id;
   final String image;
   final String song;
@@ -23,11 +23,12 @@ class PeticulerSongScrollable extends StatefulWidget {
       required this.singer});
 
   @override
-  State<PeticulerSongScrollable> createState() =>
+  _PeticulerSongScrollableState createState() =>
       _PeticulerSongScrollableState();
 }
 
-class _PeticulerSongScrollableState extends State<PeticulerSongScrollable> {
+class _PeticulerSongScrollableState
+    extends ConsumerState<PeticulerSongScrollable> {
   final service = SearchService(createDio());
   late Future<SearchResultModel> futureAlbum;
   @override
@@ -124,12 +125,12 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
       artist: '${widget.singer}',
       artUri: Uri.parse('${widget.image}'),
     );
-    
+
     SongService.playSong(mediaItem, "${widget.song}");
     setData();
   }
 
-  void setData(){
+  void setData() {
     setState(() {
       StoreSong.image = widget.image;
       StoreSong.name = widget.name;
@@ -141,13 +142,16 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
 
   @override
   Widget build(BuildContext context) {
-    final songResult = ref.watch(songControllerSetSong(CurrentSongModel(
-        isplaying: true,
-        singer: widget.singer,
-        id: widget.song,
-        image: widget.singer,
-        song: widget.song,
-        name: widget.name)));
+    Future.delayed(Duration(seconds: 3), () {
+      final dataController = ref.read(dataProvider.notifier);
+      dataController.state = CurrentSongModel(
+          isplaying: true,
+          singer: widget.singer,
+          id: widget.song,
+          image: widget.image,
+          song: widget.song,
+          name: widget.name);
+    });
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -271,17 +275,19 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
                             ],
                           ),
                         ),
-                        // Slider(
-                        //   min: 0,
-                        //   max: SongService.duration.inMilliseconds.toDouble(),
-                        //   value: SongService.position.inMilliseconds.toDouble()-1,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       SongService.player
-                        //           .seek(Duration(milliseconds: value.toInt()));
-                        //     });
-                        //   },
-                        // ),
+                        Slider(
+                          min: 0,
+                          max: SongService.duration.inMilliseconds.toDouble(),
+                          value:
+                              SongService.position.inMilliseconds.toDouble() -
+                                  1,
+                          onChanged: (value) {
+                            setState(() {
+                              SongService.player
+                                  .seek(Duration(milliseconds: value.toInt()));
+                            });
+                          },
+                        ),
                       ],
                     ),
                   ),

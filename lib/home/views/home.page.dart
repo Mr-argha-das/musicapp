@@ -28,83 +28,320 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   int pageIndex = 0;
   List<Widget> pages = [const HomeSection(), const SearchPage()];
-
+  bool isExapnded = false;
   @override
   Widget build(BuildContext context) {
+    final data = ref.watch(dataProvider);
     return Scaffold(
       backgroundColor: Colors.black,
       body: pages[pageIndex],
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(left: 30),
-        child: Container(
-            height: 60,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: Colors.grey.shade900,
-                boxShadow: const [
-                  BoxShadow(
-                      color: Colors.black87,
-                      offset: Offset(4, 4),
-                      spreadRadius: 1,
-                      blurRadius: 12)
-                ],
-                borderRadius: BorderRadius.circular(500)),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          pageIndex = 0;
-                        });
-                      },
-                      child: const Icon(
-                        Icons.home_mini_outlined,
-                        color: Colors.white,
-                        size: 28,
+      floatingActionButton: Container(
+        height: data == null && pageIndex != 0 ? 72 : isExapnded == true? 600 :  150,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if(isExapnded == true && pageIndex != 0)...[
+             Padding(
+               padding: const EdgeInsets.only(left: 30, bottom: 10),
+               child: Container(
+            
+                width: MediaQuery.of(context).size.width,
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade900,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black,
+                              spreadRadius: 1,
+                              blurRadius: 14,
+                              offset: Offset(4, 4))
+                        ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  
+                  children: [
+                    SizedBox(
+                      height: 40,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          IconButton(onPressed: (){
+                          setState(() {
+                            isExapnded = false;
+                          });
+                          }, icon: const Icon(Icons.close, color: Colors.white60,))
+                        ],
+                      ),
+                    ),
+                    SpiningCirculerContainer(height: 180, imagepath: data!.image, width: 180,),
+                    new SizedBox(
+                      height: 10,
+                    ),
+                    Text(data.name, style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),),
+                    new SizedBox(
+                      height: 5,
+                    ),
+                    Text(data.singer, style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    SizedBox(
+                      height: 80,
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 20,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,borderRadius: BorderRadius.circular(500),
+                                  boxShadow: [BoxShadow(
+                                    color: Colors.black54,
+                                    spreadRadius: 1,
+                                    blurRadius: 12,
+                                    offset: Offset(4, 4),
+                                  )]
+                                ),
+
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Icon(Icons.arrow_back_ios, color: Colors.black,),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,borderRadius: BorderRadius.circular(500),
+                                  boxShadow: [BoxShadow(
+                                    color: Colors.black54,
+                                    spreadRadius: 1,
+                                    blurRadius: 12,
+                                    offset: Offset(4, 4),
+                                  )]
+                                ),
+
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Icon(Icons.arrow_forward_ios, color: Colors.black,),
+                                ),
+                              )
+                            ],
+                          )),
+                          Expanded(child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,borderRadius: BorderRadius.circular(500),
+                                  boxShadow: [BoxShadow(
+                                    color: Colors.black54,
+                                    spreadRadius: 1,
+                                    blurRadius: 12,
+                                    offset: Offset(4, 4),
+                                  )]
+                                ),
+
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Icon(Icons.play_arrow, color: Colors.black,),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 20,
+                              )
+                            ],
+                          ))
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+               ),
+             )
+            ],
+            if (data != null && pageIndex != 0) ...[
+              GestureDetector(
+                onTap: (){
+                  setState(() {
+                    isExapnded = !isExapnded;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black,
+                              spreadRadius: 1,
+                              blurRadius: 14,
+                              offset: Offset(4, 4))
+                        ],
+                        color: Colors.grey.shade900,
+                        borderRadius: BorderRadius.circular(500)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          )),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "${data!.name}",
+                                style: TextStyle(
+                                  fontSize:
+                                      16, // Responsive font size for the title
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.left,
+                                overflow: TextOverflow.fade, // Center-align text
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width - 150,
+                                child: MarqueeText(
+                                  alwaysScroll: true,
+                                  text: TextSpan(
+                                    text: data.singer,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                  ),
+                                  speed: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SpiningCirculerContainer(
+                              height: 42,
+                              width: 42,
+                              imagepath: data!.image,
+                            ),
+                          )
+                        ],
                       ),
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Center(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          pageIndex = 1;
-                        });
-                      },
-                      child: const Icon(
-                        Icons.search,
-                        color: Colors.white,
-                        size: 28,
+              )
+            ],
+            new SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 30),
+              child: Container(
+                  height: 60,
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      color: Colors.grey.shade900,
+                      boxShadow: const [
+                        BoxShadow(
+                            color: Colors.black87,
+                            offset: Offset(4, 4),
+                            spreadRadius: 1,
+                            blurRadius: 12)
+                      ],
+                      borderRadius: BorderRadius.circular(500)),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                pageIndex = 0;
+                                isExapnded = false;
+                              });
+                            },
+                            child: const Icon(
+                              Icons.home_mini_outlined,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                ),
-                const Expanded(
-                  child: Center(
-                    child: Icon(
-                      Icons.library_music_outlined,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                  ),
-                ),
-                const Expanded(
-                  child: Center(
-                    child: Icon(
-                      Icons.person_2_outlined,
-                      color: Colors.white,
-                      size: 28,
-                    ),
-                  ),
-                ),
-              ],
-            )),
+                      Expanded(
+                        child: Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                pageIndex = 1;
+                                isExapnded = false;
+                              });
+                            },
+                            child: const Icon(
+                              Icons.search,
+                              color: Colors.white,
+                              size: 28,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Center(
+                          child: Icon(
+                            Icons.library_music_outlined,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Center(
+                          child: Icon(
+                            Icons.person_2_outlined,
+                            color: Colors.white,
+                            size: 28,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -123,6 +360,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     final _singerResult = ref.watch(homeSingerProvider);
+    final data = ref.watch(dataProvider);
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -193,7 +431,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                   ),
                 ),
               ),
-              if (StoreSong.song != null) ...[
+              if (data != null) ...[
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
@@ -210,7 +448,11 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          SpiningCirculerContainer(),
+                          SpiningCirculerContainer(
+                            height: 75,
+                            width: 75,
+                            imagepath: data.image,
+                          ),
                           const SizedBox(width: 10),
                           Expanded(
                             child: SizedBox(
@@ -228,7 +470,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                         MarqueeText(
                                           alwaysScroll: false,
                                           text: TextSpan(
-                                            text: StoreSong.name,
+                                            text: data.name,
                                           ),
                                           style: TextStyle(
                                             fontSize: width * 0.06,
@@ -240,7 +482,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                         MarqueeText(
                                           alwaysScroll: true,
                                           text: TextSpan(
-                                            text: StoreSong.singer,
+                                            text: data.singer,
                                           ),
                                           style: TextStyle(
                                             fontSize: width * 0.04,
@@ -254,18 +496,16 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                   const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
-                                      if (StoreSong.isplaying == true) {
-                                        setState(() {
-                                          StoreSong.isplaying = false;
-                                        });
+                                      if (data.isplaying == true) {
+                                        // setState(() {
+                                        //   dataController.state = ;
+                                        // });
                                         SongService.pause();
-                                        
                                       } else {
-                                        setState(() {
-                                          StoreSong.isplaying = true;
-                                        });
+                                        // setState(() {
+                                        //   data.isplaying = true;
+                                        // });
                                         SongService.ruseme();
-                                        
                                       }
                                     },
                                     child: Container(
@@ -545,7 +785,14 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
 }
 
 class SpiningCirculerContainer extends StatefulWidget {
-  const SpiningCirculerContainer({super.key});
+  final String imagepath;
+  final double height;
+  final double width;
+  const SpiningCirculerContainer(
+      {super.key,
+      required this.imagepath,
+      required this.height,
+      required this.width});
 
   @override
   State<SpiningCirculerContainer> createState() =>
@@ -578,13 +825,21 @@ class _SpiningCirculerContainerState extends State<SpiningCirculerContainer>
       turns:
           _controller, // Uses the animation controller to control the rotation
       child: Container(
-        height: 75,
-        width: 75,
+        height: widget.height,
+        width: widget.width,
         decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: Colors.black,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black54,
+                spreadRadius: 1,
+                blurRadius: 12,
+                offset: Offset(4, 4),
+              )
+            ],
             image: DecorationImage(
-                image: NetworkImage(StoreSong.image!), fit: BoxFit.cover)),
+                image: NetworkImage(widget.imagepath), fit: BoxFit.cover)),
       ),
     );
   }
