@@ -360,6 +360,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     final _singerResult = ref.watch(homeSingerProvider);
+    final singersAndSongs = ref.watch(homeAllSingerSongDataProvder);
     final data = ref.watch(dataProvider);
 
     return Scaffold(
@@ -598,15 +599,20 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
               //   child: const AlbumList(),
               // ),
               const SizedBox(height: 20),
-              ListView(
+              
+              singersAndSongs.when(data: (snapshot){
+                return ListView(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                children: snapshot.data
-                    .map((item) => SongsBySingerTab(
-                          singerName: item,
+                children: snapshot
+                    .map((item) => SongsBySingerTab(song: item,
+                       
                         ))
                     .toList(),
-              ),
+              );
+              }, error: (err, stack) {
+                return Text(err.toString());
+              }, loading: () => const Center(child: CircularProgressIndicator(),)),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -684,23 +690,16 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
 }
 
 class SongsBySingerTab extends ConsumerStatefulWidget {
-  final String singerName;
-  const SongsBySingerTab({super.key, required this.singerName});
+  final SongBySingerModel2 song;
+  const SongsBySingerTab( {required this.song, super.key,});
 
   @override
   _SongsBySingerTabState createState() => _SongsBySingerTabState();
 }
 
 class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
-  late Future<SongsBySingerModel> futureAlbum;
-
-  @override
-  void initState() {
-    super.initState();
-    final homserviec = HomeSerivce(createDio());
-    futureAlbum = homserviec
-        .getSong(SongsBySingerModelbody(singername: widget.singerName));
-  }
+ 
+  
 
   @override
   Widget build(BuildContext context) {
@@ -726,7 +725,7 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
                 ),
                 child: Center(
                   child: Text(
-                    "${widget.singerName[0]}",
+                    "${widget.song.name[0]}",
                     style: TextStyle(color: Colors.black, fontSize: 24),
                   ),
                 ),
@@ -745,7 +744,7 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
                       ),
                     ),
                     Text(
-                      "${widget.singerName}",
+                      "${widget.song.name}",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 13,
@@ -758,26 +757,14 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
           ),
         ),
         const SizedBox(height: 20),
-        FutureBuilder<SongsBySingerModel>(
-          future: futureAlbum,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Container(
+        Container(
                 height: height * 0.20,
                 width: width,
                 decoration: const BoxDecoration(color: Colors.black),
                 child: MoreLike(
-                  songslist: snapshot.data!.data,
+                  songslist: widget.song.data,
                 ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-
-            // By default, show a loading spinner.
-            return SizedBox();
-          },
-        ),
+              ),
         const SizedBox(height: 20),
       ],
     );

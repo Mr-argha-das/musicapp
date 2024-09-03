@@ -17,3 +17,24 @@ final homeSingerProvider = FutureProvider<SingerModel>((ref) async {
     final service = HomeSerivce(createDio());
     return await service.getSong(body);
   });
+
+
+final homeAllSingerSongDataProvder = FutureProvider<List<SongBySingerModel2>>((ref) async {
+  List<SongBySingerModel2> songsandSingers = [];
+  
+  final service = HomeSerivce(createDio());
+  final SingerModel singers  = await service.singerList();
+  for (int i = 0; i < singers.data.length; i++){
+   final SongsBySingerModel songs = await service.getSong(SongsBySingerModelbody(singername: singers.data[i]));
+   songsandSingers.add(SongBySingerModel2(name: singers.data[i], data: songs.data));
+  }
+  return songsandSingers;
+});
+
+class SongBySingerModel2{
+  final String name;
+  final List<Datum> data;
+
+  SongBySingerModel2({required this.name, required this.data});
+
+}
