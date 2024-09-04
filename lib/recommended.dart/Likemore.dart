@@ -6,7 +6,8 @@ import 'package:musicproject/perticuler/views/perticuler.page.dart';
 
 class MoreLike extends StatelessWidget {
   final List<Datum> songslist;
-  const MoreLike({super.key, required this.songslist});
+  final String shortsinger;
+  const MoreLike({super.key, required this.songslist, required this.shortsinger});
 
   @override
   Widget build(BuildContext context) {
@@ -31,11 +32,12 @@ class MoreLike extends StatelessWidget {
           return GestureDetector(
             onTap: (){
               Navigator.push(context, CupertinoPageRoute(builder: (context) => PeticulerSongScrollable(
+                 
                 id: songslist[index].id.oid, 
                 image: songslist[index].image, 
                 song: songslist[index].songsaudio, 
                 name: songslist[index].name, 
-                singer: songslist[index].singer,)));
+                singer: songslist[index].singer, shortSinger: shortsinger,)));
             },
             child: Container(
               margin: const EdgeInsets.symmetric(

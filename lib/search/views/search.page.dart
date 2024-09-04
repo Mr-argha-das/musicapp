@@ -145,6 +145,8 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                                       CupertinoPageRoute(
                                           builder: (context) =>
                                               PeticulerSongScrollable(
+                                                shortSinger: snapshot
+                                                      .data[index].singer,
                                                   image: snapshot
                                                       .data[index].image,
                                                   song: snapshot
@@ -268,6 +270,7 @@ class AlboumFavourite extends StatelessWidget {
                 context,
                 CupertinoPageRoute(
                     builder: (context) => PeticulerSongScrollable(
+                      shortSinger: songslist[index].singer,
                         image: songslist[index].image,
                         song: songslist[index].songsaudio,
                         name: songslist[index].name,

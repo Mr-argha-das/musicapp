@@ -17,8 +17,10 @@ class PeticulerSongScrollable extends ConsumerStatefulWidget {
   final String song;
   final String name;
   final String singer;
+  final String shortSinger;
   const PeticulerSongScrollable(
       {super.key,
+      required this.shortSinger, 
       required this.id,
       required this.image,
       required this.song,
@@ -38,18 +40,21 @@ class _PeticulerSongScrollableState
       image: "${widget.image}",
       song: "${widget.song}",
       name: "${widget.name}",
-      singer: "${widget.singer}",
+      singer: "${widget.singer}", shortsinger: widget.shortSinger,
     );
   }
 }
 
 class PerticulerSongPage extends ConsumerStatefulWidget {
+  final String shortsinger;
   final String image;
   final String song;
   final String name;
   final String singer;
-  const PerticulerSongPage({
+  const PerticulerSongPage( {
+    
     super.key,
+    required this.shortsinger,
     required this.image,
     required this.song,
     required this.name,
@@ -86,7 +91,7 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
     );
     List<MediaItem> mediaList = [];
     SongsBySingerModel futureAlbum = await service
-        .getSong(SongsBySingerModelbody(singername: widget.singer));
+        .getSong(SongsBySingerModelbody(singername: widget.shortsinger));
     for (int i = 0; i < futureAlbum.data.length; i++) {
       if(futureAlbum.data[i].image != widget.image){
         mediaList.addAll([

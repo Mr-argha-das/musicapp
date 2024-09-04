@@ -646,7 +646,7 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
                 width: width,
                 decoration: const BoxDecoration(color: Colors.black),
                 child: MoreLike(
-                  songslist: snapshot.data!.data,
+                  songslist: snapshot.data!.data, shortsinger: widget.singerName,
                 ),
               );
             } else if (snapshot.hasError) {
