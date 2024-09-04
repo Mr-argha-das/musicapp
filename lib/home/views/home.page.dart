@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -31,13 +33,14 @@ class _HomePageState extends ConsumerState<HomePage> {
   bool isExapnded = false;
   @override
   Widget build(BuildContext context) {
-    final data = ref.watch(dataProvider);
+    final songState = ref.watch(songStateProvider);
+ 
 
     return Scaffold(
       backgroundColor: Colors.black,
       body: pages[pageIndex],
       floatingActionButton: Container(
-        height: data == null && pageIndex != 0
+        height: songState.currentSong == null 
             ? 72
             : isExapnded == true
                 ? 600
@@ -47,12 +50,17 @@ class _HomePageState extends ConsumerState<HomePage> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (isExapnded == true && pageIndex != 0) ...[ SongAllTab(callBack: (){
-              setState(() {
-                isExapnded = !isExapnded;
-              });
-          }, data: data!,)],
-            if (data != null && pageIndex != 0) ...[
+            if (isExapnded == true ) ...[
+              SongAllTab(
+                callBack: () {
+                  setState(() {
+                    isExapnded = !isExapnded;
+                  });
+                },
+             
+              )
+            ],
+            if (songState.currentSong != null ) ...[
               GestureDetector(
                 onTap: () {
                   setState(() {
@@ -96,7 +104,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                "${data!.name}",
+                                songState.currentSong!.title,
                                 style: TextStyle(
                                   fontSize:
                                       16, // Responsive font size for the title
@@ -111,7 +119,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                 child: MarqueeText(
                                   alwaysScroll: true,
                                   text: TextSpan(
-                                    text: data.singer,
+                                    text: songState.currentSong!.artist,
                                   ),
                                   style: const TextStyle(
                                     fontSize: 13,
@@ -127,7 +135,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             child: SpiningCirculerContainer(
                               height: 42,
                               width: 42,
-                              imagepath: data!.image,
+                              imagepath: songState.currentSong!.id,
                             ),
                           )
                         ],
@@ -234,9 +242,8 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     final _singerResult = ref.watch(homeSingerProvider);
-    final data = ref.watch(dataProvider);
-    final songisPlaying = ref.watch(songIsPlayingChecker);
-    final isplayingProvider = ref.read(songIsPlayingChecker.notifier);
+    final songState = ref.watch(songStateProvider);
+    final songController = ref.read(songStateProvider.notifier);
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: true,
@@ -306,7 +313,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                   ),
                 ),
               ),
-              if (data != null) ...[
+              if (songState.currentSong != null) ...[
                 Padding(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 5, vertical: 10),
@@ -326,7 +333,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                           SpiningCirculerContainer(
                             height: 75,
                             width: 75,
-                            imagepath: data.image,
+                            imagepath: songState.currentSong!.id,
                           ),
                           const SizedBox(width: 10),
                           Expanded(
@@ -345,7 +352,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                         MarqueeText(
                                           alwaysScroll: false,
                                           text: TextSpan(
-                                            text: data.name,
+                                            text: songState.currentSong!.title,
                                           ),
                                           style: TextStyle(
                                             fontSize: width * 0.06,
@@ -357,7 +364,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                         MarqueeText(
                                           alwaysScroll: true,
                                           text: TextSpan(
-                                            text: data.singer,
+                                            text: songState.currentSong!.artist,
                                           ),
                                           style: TextStyle(
                                             fontSize: width * 0.04,
@@ -371,17 +378,13 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                   const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
-                                      if (songisPlaying == true) {
-                                        SongService.pause();
-                                        isplayingProvider.state = false;
-                                        
+                                      if (songState.isPlaying == true) {
+                                        songController.pause();
                                       } else {
                                         // setState(() {
                                         //   data.isplaying = true;
                                         // });
-                                        SongService.ruseme();
-                                        isplayingProvider.state = true;
-                                        
+                                        songController.resume();
                                       }
                                     },
                                     child: Container(
@@ -393,7 +396,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                       ),
                                       child: Center(
                                         child: Icon(
-                                          songisPlaying == true
+                                          songState.isPlaying == true
                                               ? const IconData(0xe47c,
                                                   fontFamily: 'MaterialIcons')
                                               : Icons.arrow_right_rounded,
@@ -723,8 +726,8 @@ class _SpiningCirculerContainerState extends State<SpiningCirculerContainer>
 
 class SongAllTab extends ConsumerStatefulWidget {
   final Function callBack;
-  final CurrentSongModel data;
-  const SongAllTab( {required this.data,required this.callBack, super.key});
+
+  const SongAllTab({ required this.callBack, super.key});
 
   @override
   _SongAllTabState createState() => _SongAllTabState();
@@ -733,8 +736,8 @@ class SongAllTab extends ConsumerStatefulWidget {
 class _SongAllTabState extends ConsumerState<SongAllTab> {
   @override
   Widget build(BuildContext context) {
-    final songisPlaying = ref.watch(songIsPlayingChecker);
-    final isplayingProvider = ref.read(songIsPlayingChecker.notifier);
+    final songState = ref.watch(songStateProvider);
+    final songController = ref.read(songStateProvider.notifier);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -776,14 +779,14 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                 ),
                 SpiningCirculerContainer(
                   height: 180,
-                  imagepath: widget.data!.image,
+                  imagepath: songState.currentSong!.id,
                   width: 180,
                 ),
                 new SizedBox(
                   height: 10,
                 ),
                 Text(
-                  widget.data.name,
+                  songState.currentSong!.title,
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -793,7 +796,7 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                   height: 5,
                 ),
                 Text(
-                  widget.data.singer,
+                  songState.currentSong!.artist.toString(),
                   style: TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
@@ -817,67 +820,42 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                           SizedBox(
                             width: 20,
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(500),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black54,
-                                    spreadRadius: 1,
-                                    blurRadius: 12,
-                                    offset: Offset(4, 4),
-                                  )
-                                ]),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Icon(
-                                Icons.arrow_back_ios,
-                                color: Colors.black,
+                          GestureDetector(
+                            onTap: (){
+                              setState(() {
+                                songController.playPreviousSong();
+                              });
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(500),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black54,
+                                      spreadRadius: 1,
+                                      blurRadius: 12,
+                                      offset: Offset(4, 4),
+                                    )
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Icon(
+                                  Icons.arrow_back_ios,
+                                  color: Colors.black,
+                                ),
                               ),
                             ),
                           ),
                           SizedBox(
                             width: 10,
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(500),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black54,
-                                    spreadRadius: 1,
-                                    blurRadius: 12,
-                                    offset: Offset(4, 4),
-                                  )
-                                ]),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                              ),
-                            ),
-                          )
-                        ],
-                      )),
-                      Expanded(
-                          child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
                           GestureDetector(
-                            onTap: () {
-                              
-                              if (isplayingProvider.state == true) {
-                                SongService.pause();
-                              } else {
-                                SongService.ruseme();
-                              }
-                              isplayingProvider.state =
-                                  !isplayingProvider.state;
-
+                            onTap: (){
+                            log("hhey");
+                            setState(() {
+                              songController.playNextSong();
+                            });
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -894,8 +872,49 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                               child: Padding(
                                 padding: const EdgeInsets.all(10.0),
                                 child: Icon(
-                                  isplayingProvider.state == true
-
+                                  Icons.arrow_forward_ios,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
+                      Expanded(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (songState.isPlaying == true) {
+                                
+                                setState(() {
+                                  songController.pause();
+                                });
+                              } else {
+                                
+                                setState(() {
+                                  songController.resume();
+                                });
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(500),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black54,
+                                      spreadRadius: 1,
+                                      blurRadius: 12,
+                                      offset: Offset(4, 4),
+                                    )
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Icon(
+                                  songState.isPlaying == true
                                       ? Icons.pause
                                       : Icons.play_arrow,
                                   color: Colors.black,

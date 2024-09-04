@@ -1,12 +1,15 @@
+import 'dart:developer';
+
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:musicproject/config/pretty.dio.dart';
+import 'package:musicproject/home/moodels/song.search.model.dart';
+import 'package:musicproject/home/moodels/songs.model.dart';
+import 'package:musicproject/home/service/home.service.dart';
 
 import 'package:musicproject/perticuler/service/song.controller.dart';
-import 'package:musicproject/search/models/search.model.dart';
-import 'package:musicproject/search/service/search.service.dart';
 
 class PeticulerSongScrollable extends ConsumerStatefulWidget {
   final String id;
@@ -29,71 +32,29 @@ class PeticulerSongScrollable extends ConsumerStatefulWidget {
 
 class _PeticulerSongScrollableState
     extends ConsumerState<PeticulerSongScrollable> {
-  final service = SearchService(createDio());
-  late Future<SearchResultModel> futureAlbum;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    futureAlbum = service.searchsong("%7C");
-    futureAlbum.then((value) {
-      setState(() {
-        value.data.insert(
-            0,
-            Datum(
-                id: Id(oid: ""),
-                name: widget.name,
-                image: widget.image,
-                songsaudio: widget.song,
-                singer: widget.singer));
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Colors.black,
-        body: FutureBuilder(
-            future: futureAlbum,
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return PageView.builder(
-                    scrollDirection: Axis.vertical,
-                    itemCount: snapshot.data!.data.length,
-                    itemBuilder: (context, index) {
-                      return PerticulerSongPage(
-                          image: "${snapshot.data!.data[index].image}",
-                          song: "${snapshot.data!.data[index].songsaudio}",
-                          name: "${snapshot.data!.data[index].name}",
-                          singer: "${snapshot.data!.data[index].singer}",
-                          id: "${snapshot.data!.data[index].id.oid}");
-                    });
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text("${snapshot.error}"),
-                );
-              }
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            }));
+    return PerticulerSongPage(
+      image: "${widget.image}",
+      song: "${widget.song}",
+      name: "${widget.name}",
+      singer: "${widget.singer}",
+    );
   }
 }
 
 class PerticulerSongPage extends ConsumerStatefulWidget {
-  final String id;
   final String image;
   final String song;
   final String name;
   final String singer;
-  const PerticulerSongPage(
-      {super.key,
-      required this.image,
-      required this.song,
-      required this.name,
-      required this.singer,
-      required this.id});
+  const PerticulerSongPage({
+    super.key,
+    required this.image,
+    required this.song,
+    required this.name,
+    required this.singer,
+  });
 
   @override
   _PerticulerSongPageState createState() => _PerticulerSongPageState();
@@ -102,58 +63,67 @@ class PerticulerSongPage extends ConsumerStatefulWidget {
 class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
   bool _isplaying = false;
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    SongService.player.durationStream.listen((duration) {
-      setState(() {
-        SongService.duration = duration ?? Duration.zero;
-      });
-    });
+  final service = HomeSerivce(createDio());
 
-    // Listen to the position of the audio
-    SongService.player.positionStream.listen((position) {
-      setState(() {
-        SongService.position = position;
-      });
-    });
+  @override
+  void initState() {
+    super.initState();
+
+    _initialize();
+
     _isplaying = true;
+  }
+
+  Future<void> _initialize() async {
+    // Use a Future to initialize data or perform actions
+    await Future.delayed(Duration.zero); // Simulate delay
     final mediaItem = MediaItem(
-      id: '${widget.song}',
+      id: '${widget.image}',
       album: '',
       title: '${widget.name}',
       artist: '${widget.singer}',
       artUri: Uri.parse('${widget.image}'),
     );
-
-    SongService.playSong(mediaItem, "${widget.song}");
-    setData();
-  }
-
-  void setData() {
-    setState(() {
-      StoreSong.image = widget.image;
-      StoreSong.name = widget.name;
-      StoreSong.singer = widget.singer;
-      StoreSong.song = widget.song;
-      StoreSong.isplaying = true;
-    });
+    List<MediaItem> mediaList = [];
+    SongsBySingerModel futureAlbum = await service
+        .getSong(SongsBySingerModelbody(singername: widget.singer));
+    for (int i = 0; i < futureAlbum.data.length; i++) {
+      if(futureAlbum.data[i].image != widget.image){
+        mediaList.addAll([
+        MediaItem(
+            id: futureAlbum.data[i].image,
+            album: '',
+            title: futureAlbum.data[i].name,
+            artist: futureAlbum.data[i].singer,
+            extras: {'url': futureAlbum.data[i].songsaudio},
+            artUri: Uri.parse(futureAlbum.data[i].image))
+      ]);
+      }
+    }
+    // Ensure state modification ha ppens outside of the widget lifecycle methods
+    if (mediaList.isNotEmpty) {
+      ref.read(songStateProvider.notifier).addToQueue(mediaList);
+      ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
+    } else {
+      log("nhi hai");
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Future.delayed(Duration(seconds: 3), () {
-      final dataController = ref.read(dataProvider.notifier);
-      final isplayingProvider = ref.read(songIsPlayingChecker.notifier);
-      isplayingProvider.state = true;
-      dataController.state = CurrentSongModel(
-          isplaying: true,
-          singer: widget.singer,
-          id: widget.song,
-          image: widget.image,
-          song: widget.song,
-          name: widget.name);
-    });
+    final songController = ref.read(songStateProvider.notifier);
+
+    final songState = ref.watch(songStateProvider);
+
+    // if (songState.currentSong == null ||
+    //     songState.currentSong!.id != mediaItem.id) {
+    //   log(mediaList.length.toString());
+
+    //   songController.addToQueue(mediaList);
+
+    // }
+    
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -166,7 +136,7 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(child: SizedBox()),
+            const Expanded(child: SizedBox()),
             Expanded(
                 child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -244,9 +214,9 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
                                           _isplaying = !_isplaying;
                                         });
                                         if (_isplaying == true) {
-                                          SongService.ruseme();
+                                          songController.resume();
                                         } else {
-                                          SongService.pause();
+                                          songController.pause();
                                         }
                                       },
                                       child: Icon(
@@ -277,19 +247,19 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
                             ],
                           ),
                         ),
-                        Slider(
-                          min: 0,
-                          max: SongService.duration.inMilliseconds.toDouble(),
-                          value:
-                              SongService.position.inMilliseconds.toDouble() -
-                                  1,
-                          onChanged: (value) {
-                            setState(() {
-                              SongService.player
-                                  .seek(Duration(milliseconds: value.toInt()));
-                            });
-                          },
-                        ),
+                        // Slider(
+                        //   min: 0,
+                        //   max: SongService.duration.inMilliseconds.toDouble(),
+                        //   value:
+                        //       SongService.position.inMilliseconds.toDouble() -
+                        //           1,
+                        //   onChanged: (value) {
+                        //     setState(() {
+                        //       SongService.player
+                        //           .seek(Duration(milliseconds: value.toInt()));
+                        //     });
+                        //   },
+                        // ),
                       ],
                     ),
                   ),
