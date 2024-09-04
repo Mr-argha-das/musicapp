@@ -32,156 +32,29 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     final data = ref.watch(dataProvider);
+
     return Scaffold(
       backgroundColor: Colors.black,
       body: pages[pageIndex],
       floatingActionButton: Container(
-        height: data == null && pageIndex != 0 ? 72 : isExapnded == true? 600 :  150,
+        height: data == null && pageIndex != 0
+            ? 72
+            : isExapnded == true
+                ? 600
+                : 150,
         width: MediaQuery.of(context).size.width,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if(isExapnded == true && pageIndex != 0)...[
-             Padding(
-               padding: const EdgeInsets.only(left: 30, bottom: 10),
-               child: Container(
-            
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade900,
-                  borderRadius: BorderRadius.circular(10),
-                  boxShadow: const [
-                          BoxShadow(
-                              color: Colors.black,
-                              spreadRadius: 1,
-                              blurRadius: 14,
-                              offset: Offset(4, 4))
-                        ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  
-                  children: [
-                    SizedBox(
-                      height: 40,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(onPressed: (){
-                          setState(() {
-                            isExapnded = false;
-                          });
-                          }, icon: const Icon(Icons.close, color: Colors.white60,))
-                        ],
-                      ),
-                    ),
-                    SpiningCirculerContainer(height: 180, imagepath: data!.image, width: 180,),
-                    new SizedBox(
-                      height: 10,
-                    ),
-                    Text(data.name, style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),),
-                    new SizedBox(
-                      height: 5,
-                    ),
-                    Text(data.singer, style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
-                    ),),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      height: 80,
-                      width: MediaQuery.of(context).size.width,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              SizedBox(
-                                width: 20,
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,borderRadius: BorderRadius.circular(500),
-                                  boxShadow: [BoxShadow(
-                                    color: Colors.black54,
-                                    spreadRadius: 1,
-                                    blurRadius: 12,
-                                    offset: Offset(4, 4),
-                                  )]
-                                ),
-
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Icon(Icons.arrow_back_ios, color: Colors.black,),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,borderRadius: BorderRadius.circular(500),
-                                  boxShadow: [BoxShadow(
-                                    color: Colors.black54,
-                                    spreadRadius: 1,
-                                    blurRadius: 12,
-                                    offset: Offset(4, 4),
-                                  )]
-                                ),
-
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Icon(Icons.arrow_forward_ios, color: Colors.black,),
-                                ),
-                              )
-                            ],
-                          )),
-                          Expanded(child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,borderRadius: BorderRadius.circular(500),
-                                  boxShadow: [BoxShadow(
-                                    color: Colors.black54,
-                                    spreadRadius: 1,
-                                    blurRadius: 12,
-                                    offset: Offset(4, 4),
-                                  )]
-                                ),
-
-                                child: Padding(
-                                  padding: const EdgeInsets.all(10.0),
-                                  child: Icon(Icons.play_arrow, color: Colors.black,),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 20,
-                              )
-                            ],
-                          ))
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-               ),
-             )
-            ],
+            if (isExapnded == true && pageIndex != 0) ...[ SongAllTab(callBack: (){
+              setState(() {
+                isExapnded = !isExapnded;
+              });
+          }, data: data!,)],
             if (data != null && pageIndex != 0) ...[
               GestureDetector(
-                onTap: (){
+                onTap: () {
                   setState(() {
                     isExapnded = !isExapnded;
                   });
@@ -230,7 +103,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                                   color: Colors.white,
                                 ),
                                 textAlign: TextAlign.left,
-                                overflow: TextOverflow.fade, // Center-align text
+                                overflow:
+                                    TextOverflow.fade, // Center-align text
                               ),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 150,
@@ -361,7 +235,8 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
     final double width = MediaQuery.of(context).size.width;
     final _singerResult = ref.watch(homeSingerProvider);
     final data = ref.watch(dataProvider);
-
+    final songisPlaying = ref.watch(songIsPlayingChecker);
+    final isplayingProvider = ref.read(songIsPlayingChecker.notifier);
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: true,
@@ -496,16 +371,17 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                   const SizedBox(width: 10),
                                   GestureDetector(
                                     onTap: () {
-                                      if (data.isplaying == true) {
-                                        // setState(() {
-                                        //   dataController.state = ;
-                                        // });
+                                      if (songisPlaying == true) {
                                         SongService.pause();
+                                        isplayingProvider.state = false;
+                                        
                                       } else {
                                         // setState(() {
                                         //   data.isplaying = true;
                                         // });
                                         SongService.ruseme();
+                                        isplayingProvider.state = true;
+                                        
                                       }
                                     },
                                     child: Container(
@@ -517,7 +393,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                                       ),
                                       child: Center(
                                         child: Icon(
-                                          StoreSong.isplaying == true
+                                          songisPlaying == true
                                               ? const IconData(0xe47c,
                                                   fontFamily: 'MaterialIcons')
                                               : Icons.arrow_right_rounded,
@@ -841,6 +717,205 @@ class _SpiningCirculerContainerState extends State<SpiningCirculerContainer>
             image: DecorationImage(
                 image: NetworkImage(widget.imagepath), fit: BoxFit.cover)),
       ),
+    );
+  }
+}
+
+class SongAllTab extends ConsumerStatefulWidget {
+  final Function callBack;
+  final CurrentSongModel data;
+  const SongAllTab( {required this.data,required this.callBack, super.key});
+
+  @override
+  _SongAllTabState createState() => _SongAllTabState();
+}
+
+class _SongAllTabState extends ConsumerState<SongAllTab> {
+  @override
+  Widget build(BuildContext context) {
+    final songisPlaying = ref.watch(songIsPlayingChecker);
+    final isplayingProvider = ref.read(songIsPlayingChecker.notifier);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 30, bottom: 10),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+              color: Colors.grey.shade900,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                    color: Colors.black,
+                    spreadRadius: 1,
+                    blurRadius: 14,
+                    offset: Offset(4, 4))
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 40,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            widget.callBack();
+                          },
+                          icon: const Icon(
+                            Icons.close,
+                            color: Colors.white60,
+                          ))
+                    ],
+                  ),
+                ),
+                SpiningCirculerContainer(
+                  height: 180,
+                  imagepath: widget.data!.image,
+                  width: 180,
+                ),
+                new SizedBox(
+                  height: 10,
+                ),
+                Text(
+                  widget.data.name,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                  ),
+                ),
+                new SizedBox(
+                  height: 5,
+                ),
+                Text(
+                  widget.data.singer,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 14,
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                SizedBox(
+                  height: 80,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(500),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black54,
+                                    spreadRadius: 1,
+                                    blurRadius: 12,
+                                    offset: Offset(4, 4),
+                                  )
+                                ]),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.arrow_back_ios,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(500),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black54,
+                                    spreadRadius: 1,
+                                    blurRadius: 12,
+                                    offset: Offset(4, 4),
+                                  )
+                                ]),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.black,
+                              ),
+                            ),
+                          )
+                        ],
+                      )),
+                      Expanded(
+                          child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              
+                              if (isplayingProvider.state == true) {
+                                SongService.pause();
+                              } else {
+                                SongService.ruseme();
+                              }
+                              isplayingProvider.state =
+                                  !isplayingProvider.state;
+
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(500),
+                                  boxShadow: const [
+                                    BoxShadow(
+                                      color: Colors.black54,
+                                      spreadRadius: 1,
+                                      blurRadius: 12,
+                                      offset: Offset(4, 4),
+                                    )
+                                  ]),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Icon(
+                                  isplayingProvider.state == true
+
+                                      ? Icons.pause
+                                      : Icons.play_arrow,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 20,
+                          )
+                        ],
+                      ))
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

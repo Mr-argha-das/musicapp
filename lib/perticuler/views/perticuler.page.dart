@@ -144,6 +144,8 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
   Widget build(BuildContext context) {
     Future.delayed(Duration(seconds: 3), () {
       final dataController = ref.read(dataProvider.notifier);
+      final isplayingProvider = ref.read(songIsPlayingChecker.notifier);
+      isplayingProvider.state = true;
       dataController.state = CurrentSongModel(
           isplaying: true,
           singer: widget.singer,

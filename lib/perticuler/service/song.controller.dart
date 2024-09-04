@@ -50,7 +50,7 @@ class CurrentSongModel {
 }
 
 final dataProvider = StateProvider<CurrentSongModel? >((ref) => null);
-
+final songIsPlayingChecker = StateProvider<bool>((ref)=> false);
 final songControllerSetSong =
     FutureProvider.family<CurrentSongModel?, CurrentSongModel?>(
         (ref, body) async {
