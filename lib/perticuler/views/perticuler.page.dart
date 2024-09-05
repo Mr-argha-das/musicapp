@@ -380,18 +380,25 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
   @override
   Widget build(BuildContext context) {
     final songController = ref.read(songStateProvider.notifier);
-
+   
     final songState = ref.watch(songStateProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
       appBar: _homeAppBar(),
-      body: _homeBody(),
+      body: songState.currentSong == null ?  
+      Center(
+        child: CircularProgressIndicator(),
+      )
+       :  _homeBody(),
       bottomNavigationBar: homeBottomMenu(),
     );
   }
 
   SizedBox homeBottomMenu() {
+    final songController = ref.read(songStateProvider.notifier);
+   
+    final songState = ref.watch(songStateProvider);
     return SizedBox(
       height: 120,
       child: Padding(
@@ -407,34 +414,53 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 onTap: () {}),
             Row(
               children: [
-                Icon(
-                  Icons.fast_rewind,
-                  color: Colors.white,
-                ),
-                SizedBox(width: 20),
-                Container(
-                  width: 60,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.white24,
-                        offset: Offset(0, 10),
-                        blurRadius: 15,
-                      ),
-                    ],
-                  ),
+                GestureDetector(
+                  onTap: (){
+                     songController.playPreviousSong();
+                  },
                   child: Icon(
-                    Icons.pause_circle_filled,
+                    Icons.fast_rewind,
                     color: Colors.white,
-                    size: 60,
                   ),
                 ),
                 SizedBox(width: 20),
-                Icon(
-                  Icons.fast_forward,
-                  color: Colors.white,
+                GestureDetector(
+                  onTap: (){
+                    if(songState.isPlaying == true){
+                      songController.pause();
+                    }else{
+                      songController.resume();
+                    }
+                  },
+                  child: Container(
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.white24,
+                          offset: Offset(0, 10),
+                          blurRadius: 15,
+                        ),
+                      ],
+                    ),
+                    child: Icon(
+                      songState.isPlaying == true?Icons.pause_circle_filled: Icons.play_arrow_rounded,
+                      color: Colors.white,
+                      size: 60,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 20),
+                GestureDetector(
+                  onTap: (){
+                    songController.playNextSong();
+                  },
+                  child: Icon(
+                    Icons.fast_forward,
+                    color: Colors.white,
+                  ),
                 ),
               ],
             ),
@@ -451,6 +477,9 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
   }
 
   Widget _homeBody() {
+     final songController = ref.read(songStateProvider.notifier);
+   
+    final songState = ref.watch(songStateProvider);
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -479,7 +508,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                         ColorFilter.mode(primaryCol, BlendMode.multiply),
                     fit: BoxFit.cover,
                     image: NetworkImage(
-                        widget.image),
+                      songState.currentSong!.id
+                        ),
                   ),
                 ),
               ),
@@ -530,7 +560,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                widget.name,
+                songState.currentSong!.title,
                 style: GoogleFonts.poppins(
                   color: Colors.white,
                   fontSize: 20,
@@ -539,7 +569,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               ),
               SizedBox(height: 15),
               Text(
-                widget.singer,
+                songState.currentSong!.artist.toString(),
                 style: GoogleFonts.lato(
                   color: Colors.white,
                   fontSize: 14,
@@ -727,11 +757,11 @@ Punda Phire Dhakk Mehkma
           },
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _nextLine, // Simulates moving to the next line
-        child: Icon(Icons.play_arrow),
-        backgroundColor: Colors.green,
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: _nextLine, // Simulates moving to the next line
+      //   child: Icon(Icons.play_arrow),
+      //   backgroundColor: Colors.green,
+      // ),
     );
   }
 
