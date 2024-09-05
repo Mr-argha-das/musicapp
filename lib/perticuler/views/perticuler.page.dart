@@ -1,5 +1,8 @@
 import 'dart:developer';
-
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,12 +39,7 @@ class _PeticulerSongScrollableState
     extends ConsumerState<PeticulerSongScrollable> {
   @override
   Widget build(BuildContext context) {
-    return PerticulerSongPage(
-      image: "${widget.image}",
-      song: "${widget.song}",
-      name: "${widget.name}",
-      singer: "${widget.singer}", shortsinger: widget.shortSinger,
-    );
+    return PlaySongPage();
   }
 }
 
@@ -275,5 +273,418 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
         ),
       ),
     );
+  }
+}
+
+
+
+
+Color primaryCol = Colors.transparent; // Maroon
+
+int selectedSongIndex = 1;
+
+class PlaySongPage extends StatefulWidget {
+  @override
+  State<PlaySongPage> createState() => _PlaySongPageState();
+}
+
+class _PlaySongPageState extends State<PlaySongPage> {
+  bool isFavorite = false; // Declare isFavorite as a state variable
+  double currentTime = 0; // Current playback time in seconds
+  final double maxTime =
+      240; // Total song duration in seconds (e.g., 4 minutes)
+  Timer? timer;
+
+  @override
+  void initState() {
+    super.initState();
+    startTimer();
+  }
+
+  // Starts the timer to simulate the song playback
+  void startTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+      setState(() {
+        if (currentTime < maxTime) {
+          currentTime++;
+        } else {
+          t.cancel();
+        }
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  // Format time from seconds to MM:SS
+  String formatTime(double seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = (seconds % 60).toInt();
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.black,
+      appBar: _homeAppBar(),
+      body: _homeBody(),
+      bottomNavigationBar: homeBottomMenu(),
+    );
+  }
+
+  SizedBox homeBottomMenu() {
+    return SizedBox(
+      height: 120,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            InkWell(
+                child: Icon(
+                  Icons.shuffle,
+                  color: Colors.white,
+                ),
+                onTap: () {}),
+            Row(
+              children: [
+                Icon(
+                  Icons.fast_rewind,
+                  color: Colors.white,
+                ),
+                SizedBox(width: 20),
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white24,
+                        offset: Offset(0, 10),
+                        blurRadius: 15,
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.pause_circle_filled,
+                    color: Colors.white,
+                    size: 60,
+                  ),
+                ),
+                SizedBox(width: 20),
+                Icon(
+                  Icons.fast_forward,
+                  color: Colors.white,
+                ),
+              ],
+            ),
+            InkWell(
+                child: Icon(
+                  Icons.toc,
+                  color: Colors.white,
+                ),
+                onTap: () {}),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _homeBody() {
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                width: 275,
+                height: 390,
+                decoration: BoxDecoration(
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white30,
+                      offset: Offset(0, 20),
+                      blurRadius: 30,
+                    ),
+                  ],
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(200),
+                    bottomRight: Radius.circular(200),
+                  ),
+                  image: DecorationImage(
+                    colorFilter:
+                        ColorFilter.mode(primaryCol, BlendMode.multiply),
+                    fit: BoxFit.cover,
+                    image: NetworkImage(
+                        "https://images.genius.com/5ec85acd8642096857b86ed76f43fb82.1000x1000x1.png"),
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: -45,
+                left: -40,
+                child: SleekCircularSlider(
+                  min: 0, // Song start time
+                  max: maxTime, // Song end time (duration)
+                  initialValue: currentTime, // Current playback position
+                  appearance: CircularSliderAppearance(
+                    size: 360,
+                    counterClockwise: true,
+                    startAngle: 150,
+                    angleRange: 120,
+                    customWidths: CustomSliderWidths(
+                      trackWidth: 3,
+                      progressBarWidth: 10,
+                      shadowWidth: 0,
+                    ),
+                    customColors: CustomSliderColors(
+                      trackColor: Colors.white12,
+                      progressBarColor: Colors.white,
+                    ),
+                    infoProperties: InfoProperties(
+                      mainLabelStyle: TextStyle(
+                        color: Colors.white,
+                      ),
+                      modifier: (double value) {
+                        return formatTime(
+                            value); // Display current time in MM:SS format
+                      },
+                    ),
+                  ),
+                  onChange: (double value) {
+                    setState(() {
+                      currentTime = value; // Update current time
+                    });
+                  },
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 60,
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                "Jatt Mehkma",
+                style: GoogleFonts.poppins(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 15),
+              Text(
+                "Glory / Yo Yo Honey Singh",
+                style: GoogleFonts.lato(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              SizedBox(height: 10),
+            ],
+          ),
+          Center(
+              child: Container(
+            height: MediaQuery.of(context).size.height * .3,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.transparent,
+            child: Center(child: LyricsScreen()),
+          ))
+        ],
+      ),
+    );
+  }
+
+  AppBar _homeAppBar() {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+      leading: IconButton(
+        icon: Icon(
+          Icons.chevron_left,
+          color: Colors.white,
+          size: 35,
+        ),
+        onPressed: () {
+          // Handle back button press
+        },
+      ),
+      actions: [
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              isFavorite = !isFavorite; // Toggle favorite status
+            });
+          },
+          child: Padding(
+            padding:
+                const EdgeInsets.all(8.0), // Add padding to increase tap area
+            child: AnimatedContainer(
+              duration: Duration(milliseconds: 300), // Animation duration
+              curve: Curves.easeInOut, // Animation curve
+              child: Icon(
+                Icons.favorite,
+                size: 35, // Size of the heart icon
+                color: isFavorite
+                    ? Colors.red
+                    : Colors.grey, // Change color on tap
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class LyricsScreen extends StatefulWidget {
+  @override
+  _LyricsScreenState createState() => _LyricsScreenState();
+}
+
+class _LyricsScreenState extends State<LyricsScreen> {
+  final String lyrics = '''
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+
+Soch Ton Vi Paar Chalde
+Naal Jede Yaar Chalde
+Kaale Karobaar Chalde
+Te Dinda Naio Fuck Mekhma
+
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+
+Yaari Bahmnaa Naal Pakki Jatt Di
+Kaali Caddi Lucky Jatt Di
+Nit Hi Threat Milde
+Akh Poori Shakki Jatt Di
+
+Tadke Hi Maal Chhak Le
+Yaar Beli Naal Chakle
+Chamber Ch Raund Dhakk Le
+Keda Lau Ga Dak Mehkma
+
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+
+Samjeya Chala Si Attach Ni Me Hoya
+Karde Si Kaabu Par Catch Ni Me Hoya
+Ohi Ohi Yaar Bus Kar Ge Gadari
+Jinna Jinna Kolo Encash Ni Me Hoya
+
+Chup Mere Ajj Vi Satuandi Ohna Nu
+Yaad Meri Ajj Vi Rawaundi Ohna Nu
+Karde O Firde Group Baaziyaan
+Chadai Meri Ajj Vi Tapaundi Ohna Nu
+
+Panjeya Te Keete Hoye Aa Oh Beh Ke Kithon Aun
+Sabar Ni Pal Da Oh Seh Ke Kithon Aun
+Paise Naal Mull Naio Mildi Class
+Mere Jeha Rutba Oh Laike Kithon Aun
+
+Asle Naal Mag Peya Dash Uttey
+Ferrariyaan Da Joda Chakka Cash Uttey
+Oh Firde A Sheher Tere Kam Piche
+Te Jatt Ethe Aaya Hoya Aish Uttey
+
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+
+Soch Ton Vi Paar Chalde
+Naal Jede Yaar Chalde
+Kaale Karobaar Chalde
+Te Dinda Naio Fuck Mekhma
+
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+
+O Billo Ni Eh Jatt Mehkma
+Poora Fatte Chak Mehkma
+Tere Sheher Vich Khauff Yaar Da
+Punda Phire Dhakk Mehkma
+''';
+
+  // Mock current line index
+  int currentLineIndex = 0;
+
+  // Split lyrics into a list of lines
+  List<String> get lyricsLines => lyrics.split('\n');
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Container(
+        padding: EdgeInsets.symmetric(horizontal: 20),
+        child: ListView.builder(
+          itemCount: lyricsLines.length,
+          itemBuilder: (context, index) {
+            // Highlight the current line
+            bool isCurrentLine = index == currentLineIndex;
+            return AnimatedContainer(
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              padding: EdgeInsets.symmetric(vertical: 5),
+              child: Text(
+                lyricsLines[index],
+                textAlign: TextAlign.center,
+                style: GoogleFonts.lato(
+                  fontSize: isCurrentLine ? 18 : 16,
+                  fontWeight:
+                      isCurrentLine ? FontWeight.bold : FontWeight.normal,
+                  height: 1.5,
+                  color: isCurrentLine ? Colors.white : Colors.white54,
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _nextLine, // Simulates moving to the next line
+        child: Icon(Icons.play_arrow),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  // Mock function to simulate highlighting the next line
+  void _nextLine() {
+    setState(() {
+      if (currentLineIndex < lyricsLines.length - 1) {
+        currentLineIndex++;
+      } else {
+        currentLineIndex = 0; // Restart for demonstration purposes
+      }
+    });
   }
 }
