@@ -23,7 +23,7 @@ class PeticulerSongScrollable extends ConsumerStatefulWidget {
   final String shortSinger;
   const PeticulerSongScrollable(
       {super.key,
-      required this.shortSinger, 
+      required this.shortSinger,
       required this.id,
       required this.image,
       required this.song,
@@ -39,44 +39,282 @@ class _PeticulerSongScrollableState
     extends ConsumerState<PeticulerSongScrollable> {
   @override
   Widget build(BuildContext context) {
-    return PlaySongPage();
+    return PlaySongPage(
+      shortsinger: widget.shortSinger, 
+      image: widget.image, 
+      song: widget.song, 
+      name: widget.name, 
+      singer: widget.singer,);
   }
 }
 
-class PerticulerSongPage extends ConsumerStatefulWidget {
+// class PerticulerSongPage extends ConsumerStatefulWidget {
+//   final String shortsinger;
+//   final String image;
+//   final String song;
+//   final String name;
+//   final String singer;
+//   const PerticulerSongPage({
+//     super.key,
+//     required this.shortsinger,
+//     required this.image,
+//     required this.song,
+//     required this.name,
+//     required this.singer,
+//   });
+
+//   @override
+//   _PerticulerSongPageState createState() => _PerticulerSongPageState();
+// }
+
+// class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
+//   bool _isplaying = false;
+//   @override
+//   final service = HomeSerivce(createDio());
+
+//   @override
+//   void initState() {
+//     super.initState();
+
+//     _initialize();
+
+//     _isplaying = true;
+//   }
+
+//   Future<void> _initialize() async {
+//     // Use a Future to initialize data or perform actions
+//     await Future.delayed(Duration.zero); // Simulate delay
+//     final mediaItem = MediaItem(
+//       id: '${widget.image}',
+//       album: '',
+//       title: '${widget.name}',
+//       artist: '${widget.singer}',
+//       artUri: Uri.parse('${widget.image}'),
+//     );
+//     List<MediaItem> mediaList = [];
+//     SongsBySingerModel futureAlbum = await service
+//         .getSong(SongsBySingerModelbody(singername: widget.shortsinger));
+//     for (int i = 0; i < futureAlbum.data.length; i++) {
+//       if (futureAlbum.data[i].image != widget.image) {
+//         mediaList.addAll([
+//           MediaItem(
+//               id: futureAlbum.data[i].image,
+//               album: '',
+//               title: futureAlbum.data[i].name,
+//               artist: futureAlbum.data[i].singer,
+//               extras: {'url': futureAlbum.data[i].songsaudio},
+//               artUri: Uri.parse(futureAlbum.data[i].image))
+//         ]);
+//       }
+//     }
+//     // Ensure state modification ha ppens outside of the widget lifecycle methods
+//     if (mediaList.isNotEmpty) {
+//       ref.read(songStateProvider.notifier).addToQueue(mediaList);
+//       ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
+//     } else {
+//       log("nhi hai");
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     final songController = ref.read(songStateProvider.notifier);
+
+//     final songState = ref.watch(songStateProvider);
+
+//     // if (songState.currentSong == null ||
+//     //     songState.currentSong!.id != mediaItem.id) {
+//     //   log(mediaList.length.toString());
+
+//     //   songController.addToQueue(mediaList);
+
+//     // }
+
+//     return Scaffold(
+//       backgroundColor: Colors.black,
+//       body: Container(
+//         height: MediaQuery.of(context).size.height,
+//         width: MediaQuery.of(context).size.width,
+//         decoration: BoxDecoration(
+//             image: DecorationImage(
+//                 image: NetworkImage(widget.image), fit: BoxFit.fitHeight)),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           crossAxisAlignment: CrossAxisAlignment.center,
+//           children: [
+//             const Expanded(child: SizedBox()),
+//             Expanded(
+//                 child: Column(
+//               mainAxisAlignment: MainAxisAlignment.center,
+//               crossAxisAlignment: CrossAxisAlignment.center,
+//               children: [
+//                 Padding(
+//                   padding: const EdgeInsets.all(8.0),
+//                   child: Container(
+//                     height: 250,
+//                     width: MediaQuery.of(context).size.width,
+//                     decoration: BoxDecoration(
+//                         color: Colors.black54,
+//                         borderRadius: BorderRadius.circular(10),
+//                         boxShadow: const [
+//                           BoxShadow(
+//                               color: Colors.black54,
+//                               spreadRadius: 1,
+//                               blurRadius: 12,
+//                               offset: Offset(4, 4))
+//                         ]),
+//                     child: Column(
+//                       mainAxisAlignment: MainAxisAlignment.center,
+//                       crossAxisAlignment: CrossAxisAlignment.start,
+//                       children: [
+//                         Padding(
+//                           padding: const EdgeInsets.all(8.0),
+//                           child: Text(
+//                             widget.name,
+//                             style: GoogleFonts.montserrat(
+//                                 color: Colors.white,
+//                                 fontWeight: FontWeight.bold,
+//                                 fontSize: 25),
+//                           ),
+//                         ),
+//                         Padding(
+//                           padding: const EdgeInsets.only(left: 8),
+//                           child: Text(
+//                             widget.singer,
+//                             style: GoogleFonts.montserrat(
+//                                 color: Colors.white,
+//                                 fontWeight: FontWeight.w600,
+//                                 fontSize: 15),
+//                           ),
+//                         ),
+//                         SizedBox(
+//                           height: 100,
+//                           child: Row(
+//                             mainAxisAlignment: MainAxisAlignment.center,
+//                             crossAxisAlignment: CrossAxisAlignment.center,
+//                             children: [
+//                               Expanded(
+//                                 child: Center(
+//                                   child: Container(
+//                                       decoration: BoxDecoration(
+//                                           color: Colors.black,
+//                                           borderRadius:
+//                                               BorderRadius.circular(500)),
+//                                       child: const Padding(
+//                                         padding: EdgeInsets.all(8.0),
+//                                         child: Icon(
+//                                           Icons.arrow_back_ios,
+//                                           color: Colors.white,
+//                                           size: 28,
+//                                         ),
+//                                       )),
+//                                 ),
+//                               ),
+//                               Expanded(
+//                                   child: Center(
+//                                 child: Padding(
+//                                   padding: EdgeInsets.all(8.0),
+//                                   child: GestureDetector(
+//                                       onTap: () {
+//                                         setState(() {
+//                                           _isplaying = !_isplaying;
+//                                         });
+//                                         if (_isplaying == true) {
+//                                           songController.resume();
+//                                         } else {
+//                                           songController.pause();
+//                                         }
+//                                       },
+//                                       child: Icon(
+//                                         _isplaying == false
+//                                             ? Icons.play_arrow_outlined
+//                                             : Icons.stop_circle_outlined,
+//                                         color: Colors.white,
+//                                         size: 40,
+//                                       )),
+//                                 ),
+//                               )),
+//                               Expanded(
+//                                   child: Center(
+//                                 child: Container(
+//                                     decoration: BoxDecoration(
+//                                         color: Colors.black,
+//                                         borderRadius:
+//                                             BorderRadius.circular(500)),
+//                                     child: const Padding(
+//                                       padding: EdgeInsets.all(8.0),
+//                                       child: Icon(
+//                                         Icons.arrow_forward_ios,
+//                                         color: Colors.white,
+//                                         size: 28,
+//                                       ),
+//                                     )),
+//                               ))
+//                             ],
+//                           ),
+//                         ),
+//                         // Slider(
+//                         //   min: 0,
+//                         //   max: SongService.duration.inMilliseconds.toDouble(),
+//                         //   value:
+//                         //       SongService.position.inMilliseconds.toDouble() -
+//                         //           1,
+//                         //   onChanged: (value) {
+//                         //     setState(() {
+//                         //       SongService.player
+//                         //           .seek(Duration(milliseconds: value.toInt()));
+//                         //     });
+//                         //   },
+//                         // ),
+//                       ],
+//                     ),
+//                   ),
+//                 )
+//               ],
+//             ))
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+Color primaryCol = Colors.transparent; // Maroon
+
+int selectedSongIndex = 1;
+
+class PlaySongPage extends ConsumerStatefulWidget {
   final String shortsinger;
   final String image;
   final String song;
   final String name;
   final String singer;
-  const PerticulerSongPage( {
-    
-    super.key,
-    required this.shortsinger,
-    required this.image,
-    required this.song,
-    required this.name,
-    required this.singer,
-  });
 
+  PlaySongPage(
+      {super.key,
+      required this.shortsinger,
+      required this.image,
+      required this.song,
+      required this.name,
+      required this.singer});
   @override
-  _PerticulerSongPageState createState() => _PerticulerSongPageState();
+  _PlaySongPageState createState() => _PlaySongPageState();
 }
 
-class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
-  bool _isplaying = false;
-  @override
-  final service = HomeSerivce(createDio());
+class _PlaySongPageState extends ConsumerState<PlaySongPage> {
+  bool isFavorite = false; // Declare isFavorite as a state variable
+  double currentTime = 0; // Current playback time in seconds
+  final double maxTime =
+      240; // Total song duration in seconds (e.g., 4 minutes)
+  Timer? timer;
 
   @override
   void initState() {
     super.initState();
-
     _initialize();
-
-    _isplaying = true;
+    startTimer();
   }
-
+  final service = HomeSerivce(createDio());
   Future<void> _initialize() async {
     // Use a Future to initialize data or perform actions
     await Future.delayed(Duration.zero); // Simulate delay
@@ -91,214 +329,26 @@ class _PerticulerSongPageState extends ConsumerState<PerticulerSongPage> {
     SongsBySingerModel futureAlbum = await service
         .getSong(SongsBySingerModelbody(singername: widget.shortsinger));
     for (int i = 0; i < futureAlbum.data.length; i++) {
-      if(futureAlbum.data[i].image != widget.image){
+      if (futureAlbum.data[i].image != widget.image) {
         mediaList.addAll([
-        MediaItem(
-            id: futureAlbum.data[i].image,
-            album: '',
-            title: futureAlbum.data[i].name,
-            artist: futureAlbum.data[i].singer,
-            extras: {'url': futureAlbum.data[i].songsaudio},
-            artUri: Uri.parse(futureAlbum.data[i].image))
-      ]);
+          MediaItem(
+              id: futureAlbum.data[i].image,
+              album: '',
+              title: futureAlbum.data[i].name,
+              artist: futureAlbum.data[i].singer,
+              extras: {'url': futureAlbum.data[i].songsaudio},
+              artUri: Uri.parse(futureAlbum.data[i].image))
+        ]);
       }
     }
     // Ensure state modification ha ppens outside of the widget lifecycle methods
     if (mediaList.isNotEmpty) {
       ref.read(songStateProvider.notifier).addToQueue(mediaList);
       ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
+      startTimer();
     } else {
       log("nhi hai");
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final songController = ref.read(songStateProvider.notifier);
-
-    final songState = ref.watch(songStateProvider);
-
-    // if (songState.currentSong == null ||
-    //     songState.currentSong!.id != mediaItem.id) {
-    //   log(mediaList.length.toString());
-
-    //   songController.addToQueue(mediaList);
-
-    // }
-    
-
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            image: DecorationImage(
-                image: NetworkImage(widget.image), fit: BoxFit.fitHeight)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Expanded(child: SizedBox()),
-            Expanded(
-                child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                    height: 250,
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                        color: Colors.black54,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.black54,
-                              spreadRadius: 1,
-                              blurRadius: 12,
-                              offset: Offset(4, 4))
-                        ]),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            widget.name,
-                            style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                                fontSize: 25),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(left: 8),
-                          child: Text(
-                            widget.singer,
-                            style: GoogleFonts.montserrat(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 15),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 100,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Center(
-                                  child: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.black,
-                                          borderRadius:
-                                              BorderRadius.circular(500)),
-                                      child: const Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Icon(
-                                          Icons.arrow_back_ios,
-                                          color: Colors.white,
-                                          size: 28,
-                                        ),
-                                      )),
-                                ),
-                              ),
-                              Expanded(
-                                  child: Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          _isplaying = !_isplaying;
-                                        });
-                                        if (_isplaying == true) {
-                                          songController.resume();
-                                        } else {
-                                          songController.pause();
-                                        }
-                                      },
-                                      child: Icon(
-                                        _isplaying == false
-                                            ? Icons.play_arrow_outlined
-                                            : Icons.stop_circle_outlined,
-                                        color: Colors.white,
-                                        size: 40,
-                                      )),
-                                ),
-                              )),
-                              Expanded(
-                                  child: Center(
-                                child: Container(
-                                    decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius:
-                                            BorderRadius.circular(500)),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Icon(
-                                        Icons.arrow_forward_ios,
-                                        color: Colors.white,
-                                        size: 28,
-                                      ),
-                                    )),
-                              ))
-                            ],
-                          ),
-                        ),
-                        // Slider(
-                        //   min: 0,
-                        //   max: SongService.duration.inMilliseconds.toDouble(),
-                        //   value:
-                        //       SongService.position.inMilliseconds.toDouble() -
-                        //           1,
-                        //   onChanged: (value) {
-                        //     setState(() {
-                        //       SongService.player
-                        //           .seek(Duration(milliseconds: value.toInt()));
-                        //     });
-                        //   },
-                        // ),
-                      ],
-                    ),
-                  ),
-                )
-              ],
-            ))
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-
-
-
-Color primaryCol = Colors.transparent; // Maroon
-
-int selectedSongIndex = 1;
-
-class PlaySongPage extends StatefulWidget {
-  @override
-  State<PlaySongPage> createState() => _PlaySongPageState();
-}
-
-class _PlaySongPageState extends State<PlaySongPage> {
-  bool isFavorite = false; // Declare isFavorite as a state variable
-  double currentTime = 0; // Current playback time in seconds
-  final double maxTime =
-      240; // Total song duration in seconds (e.g., 4 minutes)
-  Timer? timer;
-
-  @override
-  void initState() {
-    super.initState();
-    startTimer();
   }
 
   // Starts the timer to simulate the song playback
@@ -329,6 +379,9 @@ class _PlaySongPageState extends State<PlaySongPage> {
 
   @override
   Widget build(BuildContext context) {
+    final songController = ref.read(songStateProvider.notifier);
+
+    final songState = ref.watch(songStateProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
@@ -426,7 +479,7 @@ class _PlaySongPageState extends State<PlaySongPage> {
                         ColorFilter.mode(primaryCol, BlendMode.multiply),
                     fit: BoxFit.cover,
                     image: NetworkImage(
-                        "https://images.genius.com/5ec85acd8642096857b86ed76f43fb82.1000x1000x1.png"),
+                        widget.image),
                   ),
                 ),
               ),
@@ -477,7 +530,7 @@ class _PlaySongPageState extends State<PlaySongPage> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                "Jatt Mehkma",
+                widget.name,
                 style: GoogleFonts.poppins(
                   color: Colors.white,
                   fontSize: 20,
@@ -486,7 +539,7 @@ class _PlaySongPageState extends State<PlaySongPage> {
               ),
               SizedBox(height: 15),
               Text(
-                "Glory / Yo Yo Honey Singh",
+                widget.singer,
                 style: GoogleFonts.lato(
                   color: Colors.white,
                   fontSize: 14,
@@ -519,7 +572,7 @@ class _PlaySongPageState extends State<PlaySongPage> {
           size: 35,
         ),
         onPressed: () {
-          // Handle back button press
+          Navigator.pop(context);
         },
       ),
       actions: [
@@ -550,12 +603,14 @@ class _PlaySongPageState extends State<PlaySongPage> {
   }
 }
 
-class LyricsScreen extends StatefulWidget {
+///////
+///
+class LyricsScreen extends ConsumerStatefulWidget {
   @override
   _LyricsScreenState createState() => _LyricsScreenState();
 }
 
-class _LyricsScreenState extends State<LyricsScreen> {
+class _LyricsScreenState extends ConsumerState<LyricsScreen> {
   final String lyrics = '''
 O Billo Ni Eh Jatt Mehkma
 Poora Fatte Chak Mehkma
@@ -641,6 +696,9 @@ Punda Phire Dhakk Mehkma
 
   @override
   Widget build(BuildContext context) {
+    final songController = ref.read(songStateProvider.notifier);
+
+    final songState = ref.watch(songStateProvider);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
