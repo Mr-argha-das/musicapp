@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:marquee_text/marquee_text.dart';
 import 'package:marquee_text/vertical_marquee_text.dart';
 import 'package:musicproject/config/pretty.dio.dart';
@@ -566,7 +567,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
         );
       }, loading: () {
         return Center(
-          child: CircularProgressIndicator(),
+          child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 40),
         );
       }),
     );

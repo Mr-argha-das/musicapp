@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -389,7 +390,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
       appBar: _homeAppBar(),
       body: songState.currentSong == null ?  
       Center(
-        child: CircularProgressIndicator(),
+        child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 22),
       )
        :  _homeBody(),
       bottomNavigationBar: homeBottomMenu(),

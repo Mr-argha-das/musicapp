@@ -54,6 +54,7 @@ dependencies:
   hive: ^2.2.3
   marquee_text: ^2.5.0+1
   sleek_circular_slider: ^2.0.1
+  loading_animation_widget: ^1.2.1
 
 
 dev_dependencies:

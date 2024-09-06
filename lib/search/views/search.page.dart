@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:musicproject/home/controller/home.controller.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
@@ -101,7 +102,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         songslist: snapshot.data,
                       ),
                   loading: () => Center(
-                        child: CircularProgressIndicator(),
+                        child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 40),
                       ),
                   error: (err, stack) {
                     return Center(
@@ -239,7 +240,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                     );
                   },
                   loading: () => Center(
-                        child: CircularProgressIndicator(),
+                        child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 40),
                       ),
                   error: (err, stack) {
                     return Center(
