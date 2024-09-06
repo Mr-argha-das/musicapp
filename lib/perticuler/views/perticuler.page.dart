@@ -484,10 +484,10 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
      final songController = ref.read(songStateProvider.notifier);
         
     final songState = ref.watch(songStateProvider);
-    final currentSong = songState.currentSong;
+    final currentSong = songState.totalPlayTime;
 
-    final duration = currentSong?.duration ?? Duration.zero;
-    log(duration.inSeconds.toString());
+    final duration = currentSong.inSeconds.toDouble();
+    log(duration.toString());
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -528,8 +528,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 left: -40,
                 child: SleekCircularSlider(
                   min: 0, // Song start time
-                  max: 250, // Song end time (duration)
-                  initialValue: 250, // Current playback position
+                  max: duration, // Song end time (duration)
+                  initialValue: songState.currentPosition.inSeconds.toDouble(), // Current playback position
                   appearance: CircularSliderAppearance(
                     size: 360,
                     counterClockwise: true,

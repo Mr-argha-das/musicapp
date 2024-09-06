@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
@@ -5,14 +7,16 @@ import 'package:just_audio_background/just_audio_background.dart';
 class SongState {
   final MediaItem? currentSong;
   final bool isPlaying;
-  final int playCount; // Number of times the current song has been played
-  final Duration totalPlayTime; // Total playtime for the current song
+  final int playCount;
+  final Duration totalPlayTime;
+  final Duration currentPosition; // Current position of the song
 
   SongState({
     this.currentSong,
     this.isPlaying = false,
     this.playCount = 0,
     this.totalPlayTime = Duration.zero,
+    this.currentPosition = Duration.zero, // Initialize current position
   });
 }
 
@@ -38,6 +42,18 @@ class SongStateNotifier extends StateNotifier<SongState> {
     }, onError: (error) {
       print('Playback error: $error');
     });
+
+    _player.positionStream.listen((position) {
+      if (state.currentSong != null) {
+        state = SongState(
+          currentSong: state.currentSong,
+          isPlaying: state.isPlaying,
+          playCount: state.playCount,
+          totalPlayTime: state.totalPlayTime,
+          currentPosition: position, // Update current position
+        );
+      }
+    });
   }
 
   void addToQueue(List<MediaItem> songs) {
@@ -59,6 +75,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
             false, // Temporarily set to false while switching to the next song
         playCount: updatedPlayCount,
         totalPlayTime: updatedPlayTime,
+        currentPosition: _currentPlayTime, // Update current position
       );
     }
 
@@ -80,11 +97,14 @@ class SongStateNotifier extends StateNotifier<SongState> {
       await _player.setAudioSource(audioSource);
       _player.play();
       _player.durationStream.listen((duration) {
+        log("======================");
+        log(duration!.inSeconds.toString());
         state = SongState(
           currentSong: song,
           isPlaying: true,
           playCount: state.playCount,
-          totalPlayTime: duration!,
+          totalPlayTime: duration,
+          currentPosition: _player.position, // Set initial position
         );
       });
     } catch (e) {
@@ -105,6 +125,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
         isPlaying: false,
         playCount: state.playCount,
         totalPlayTime: state.totalPlayTime + _currentPlayTime,
+        currentPosition: Duration.zero, // Reset position when stopped
       );
     }
     await _player.stop();
@@ -116,6 +137,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
       isPlaying: true,
       playCount: state.playCount,
       totalPlayTime: state.totalPlayTime,
+      currentPosition: _player.position, // Keep current position
     );
     await _player.play();
   }
@@ -126,6 +148,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
       isPlaying: false,
       playCount: state.playCount,
       totalPlayTime: state.totalPlayTime + _currentPlayTime,
+      currentPosition: _player.position, // Keep current position
     );
     await _player.pause();
   }
@@ -141,6 +164,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
         isPlaying: false,
         playCount: state.playCount + 1,
         totalPlayTime: state.totalPlayTime + _currentPlayTime,
+        currentPosition: _player.position, // Keep current position
       );
     }
 
@@ -149,7 +173,10 @@ class SongStateNotifier extends StateNotifier<SongState> {
     final previousSong = _songQueue[_currentIndex];
     final songUrl = previousSong.extras?['url'] ?? '';
 
-    state = SongState(currentSong: previousSong, isPlaying: true);
+    state = SongState(
+        currentSong: previousSong,
+        isPlaying: true,
+        currentPosition: Duration.zero);
     playSong(previousSong, songUrl);
   }
 }
