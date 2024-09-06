@@ -35,7 +35,6 @@ class SongStateNotifier extends StateNotifier<SongState> {
       if (_player.playing) {
         _currentPlayTime = _player.position;
       }
-      
     }, onError: (error) {
       print('Playback error: $error');
     });
@@ -56,7 +55,8 @@ class SongStateNotifier extends StateNotifier<SongState> {
 
       state = SongState(
         currentSong: currentSong,
-        isPlaying: false, // Temporarily set to false while switching to the next song
+        isPlaying:
+            false, // Temporarily set to false while switching to the next song
         playCount: updatedPlayCount,
         totalPlayTime: updatedPlayTime,
       );
@@ -66,8 +66,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
     _currentIndex = (_currentIndex + 1) % _songQueue.length;
     final songUrl = nextSong.extras?['url'] ?? '';
 
-    
-     playSong(nextSong, songUrl);
+    playSong(nextSong, songUrl);
   }
 
   void playSong(MediaItem song, String songUrl) async {
@@ -79,14 +78,15 @@ class SongStateNotifier extends StateNotifier<SongState> {
 
       await _player.setVolume(1.0); // Adjust volume if needed
       await _player.setAudioSource(audioSource);
-       _player.play();
-      state = SongState(
-        currentSong: song,
-        isPlaying: true,
-        playCount: state.playCount,
-        totalPlayTime: _player.duration?? Duration.zero,
-      );
-      
+      _player.play();
+      _player.durationStream.listen((duration) {
+        state = SongState(
+          currentSong: song,
+          isPlaying: true,
+          playCount: state.playCount,
+          totalPlayTime: duration!,
+        );
+      });
     } catch (e) {
       print('Error playing song: $e');
       // Optionally update state to reflect the error
@@ -144,12 +144,13 @@ class SongStateNotifier extends StateNotifier<SongState> {
       );
     }
 
-    _currentIndex = (_currentIndex - 1 + _songQueue.length) % _songQueue.length; // Ensure index wraps around
+    _currentIndex = (_currentIndex - 1 + _songQueue.length) %
+        _songQueue.length; // Ensure index wraps around
     final previousSong = _songQueue[_currentIndex];
     final songUrl = previousSong.extras?['url'] ?? '';
 
     state = SongState(currentSong: previousSong, isPlaying: true);
-     playSong(previousSong, songUrl);
+    playSong(previousSong, songUrl);
   }
 }
 
@@ -159,7 +160,8 @@ final audioPlayerProvider = Provider<AudioPlayer>((ref) {
 });
 
 // Create a Riverpod StateNotifierProvider
-final songStateProvider = StateNotifierProvider<SongStateNotifier, SongState>((ref) {
+final songStateProvider =
+    StateNotifierProvider<SongStateNotifier, SongState>((ref) {
   final audioPlayer = ref.watch(audioPlayerProvider);
   return SongStateNotifier(audioPlayer);
 });
