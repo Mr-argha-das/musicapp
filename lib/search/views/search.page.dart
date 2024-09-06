@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:musicproject/home/controller/home.controller.dart';
+import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
 import 'package:musicproject/recommended.dart/random.collor.dart';
 import 'package:musicproject/search/controller/search.controller.dart';
@@ -19,9 +21,17 @@ class SearchPage extends ConsumerStatefulWidget {
 
 class _SearchPageState extends ConsumerState<SearchPage> {
   final _searchController = TextEditingController();
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    if(ref.watch(homeArtisittoSearchPageProvider.notifier).state != null){
+      _searchController.text = ref.watch(homeArtisittoSearchPageProvider.notifier).state.toString();
+    }
+  }
   @override
   Widget build(BuildContext context) {
+    
     final searchresult = ref.watch(searchResultProvider(
         _searchController.text.isEmpty ? " | " : _searchController.text));
 
@@ -140,12 +150,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                               padding: const EdgeInsets.only(left: 15.0),
                               child: GestureDetector(
                                 onTap: () {
+                                  ref
+                                      .read(songStateProvider.notifier)
+                                      .stopSong();
                                   Navigator.push(
                                       context,
                                       CupertinoPageRoute(
                                           builder: (context) =>
                                               PeticulerSongScrollable(
-                                                shortSinger: snapshot
+                                                  shortSinger: snapshot
                                                       .data[index].singer,
                                                   image: snapshot
                                                       .data[index].image,
@@ -250,10 +263,15 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   }
 }
 
-class AlboumFavourite extends StatelessWidget {
+class AlboumFavourite extends ConsumerStatefulWidget {
   final List<Datum> songslist;
   const AlboumFavourite({super.key, required this.songslist});
 
+  @override
+  _AlboumFavouriteState createState() => _AlboumFavouriteState();
+}
+
+class _AlboumFavouriteState extends ConsumerState<AlboumFavourite> {
   @override
   Widget build(BuildContext context) {
     return MasonryGridView.count(
@@ -266,16 +284,17 @@ class AlboumFavourite extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
+            ref.read(songStateProvider.notifier).stopSong();
             Navigator.push(
                 context,
                 CupertinoPageRoute(
                     builder: (context) => PeticulerSongScrollable(
-                      shortSinger: songslist[index].singer,
-                        image: songslist[index].image,
-                        song: songslist[index].songsaudio,
-                        name: songslist[index].name,
-                        singer: songslist[index].singer,
-                        id: songslist[index].id.oid)));
+                        shortSinger: widget.songslist[index].singer,
+                        image: widget.songslist[index].image,
+                        song: widget.songslist[index].songsaudio,
+                        name: widget.songslist[index].name,
+                        singer: widget.songslist[index].singer,
+                        id: widget.songslist[index].id.oid)));
           },
           child: Container(
             width: (MediaQuery.of(context).size.width / 2) -
@@ -300,7 +319,7 @@ class AlboumFavourite extends StatelessWidget {
                     height: MediaQuery.of(context).size.width * .15,
                     width: MediaQuery.of(context).size.width * .15,
                     fit: BoxFit.cover,
-                    imageUrl: songslist[index].image,
+                    imageUrl: widget.songslist[index].image,
                     placeholder: (context, url) => SizedBox(),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
@@ -308,7 +327,7 @@ class AlboumFavourite extends StatelessWidget {
                 Expanded(
                   child: Padding(
                       padding: EdgeInsets.only(top: 5, left: 10),
-                      child: Text(songslist[index].name,
+                      child: Text(widget.songslist[index].name,
                           textAlign: TextAlign.left,
                           overflow: TextOverflow.fade,
                           style: GoogleFonts.montserrat(color: Colors.white))),
@@ -386,7 +405,9 @@ class BrowseChoise extends StatelessWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 20,)
+                        SizedBox(
+                          width: 20,
+                        )
                       ],
                     )
                   ],

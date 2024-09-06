@@ -5,14 +5,22 @@ import 'package:just_audio_background/just_audio_background.dart';
 class SongState {
   final MediaItem? currentSong;
   final bool isPlaying;
+  final int playCount; // Number of times the current song has been played
+  final Duration totalPlayTime; // Total playtime for the current song
 
-  SongState({this.currentSong, this.isPlaying = false});
+  SongState({
+    this.currentSong,
+    this.isPlaying = false,
+    this.playCount = 0,
+    this.totalPlayTime = Duration.zero,
+  });
 }
 
 class SongStateNotifier extends StateNotifier<SongState> {
   final AudioPlayer _player;
   int _currentIndex = 0;
   List<MediaItem> _songQueue = [];
+  Duration _currentPlayTime = Duration.zero;
 
   SongStateNotifier(this._player) : super(SongState()) {
     _setupPlayerListeners();
@@ -23,26 +31,43 @@ class SongStateNotifier extends StateNotifier<SongState> {
       if (event.processingState == ProcessingState.completed) {
         playNextSong();
       }
+      // Track playtime only when the player is playing
+      if (_player.playing) {
+        _currentPlayTime = _player.position;
+      }
+      
     }, onError: (error) {
       print('Playback error: $error');
     });
   }
 
   void addToQueue(List<MediaItem> songs) {
-
     _songQueue.addAll(songs);
-
   }
 
   void playNextSong() async {
     if (_songQueue.isEmpty) return;
 
+    final currentSong = state.currentSong;
+    if (currentSong != null) {
+      // Update play count and total play time for the current song
+      final updatedPlayCount = state.playCount + 1;
+      final updatedPlayTime = state.totalPlayTime + _currentPlayTime;
+
+      state = SongState(
+        currentSong: currentSong,
+        isPlaying: false, // Temporarily set to false while switching to the next song
+        playCount: updatedPlayCount,
+        totalPlayTime: updatedPlayTime,
+      );
+    }
+
     final nextSong = _songQueue[_currentIndex];
     _currentIndex = (_currentIndex + 1) % _songQueue.length;
     final songUrl = nextSong.extras?['url'] ?? '';
 
-     state = SongState(currentSong: nextSong, isPlaying: true);
-       playSong(nextSong, songUrl);
+    
+     playSong(nextSong, songUrl);
   }
 
   void playSong(MediaItem song, String songUrl) async {
@@ -52,13 +77,15 @@ class SongStateNotifier extends StateNotifier<SongState> {
         tag: song,
       );
 
-      
-
-      await _player.stop();
       await _player.setVolume(1.0); // Adjust volume if needed
       await _player.setAudioSource(audioSource);
-      state = SongState(currentSong: song, isPlaying: true);
-      await _player.play();
+       _player.play();
+      state = SongState(
+        currentSong: song,
+        isPlaying: true,
+        playCount: state.playCount,
+        totalPlayTime: _player.duration?? Duration.zero,
+      );
       
     } catch (e) {
       print('Error playing song: $e');
@@ -66,22 +93,56 @@ class SongStateNotifier extends StateNotifier<SongState> {
     }
   }
 
+  void shuffle() async {
+    await _player.shuffle();
+  }
+
   void stopSong() async {
-    state = SongState(currentSong: state.currentSong, isPlaying: false);
+    final currentSong = state.currentSong;
+    if (currentSong != null) {
+      state = SongState(
+        currentSong: null,
+        isPlaying: false,
+        playCount: state.playCount,
+        totalPlayTime: state.totalPlayTime + _currentPlayTime,
+      );
+    }
     await _player.stop();
   }
 
   void resume() async {
-    state = SongState(currentSong: state.currentSong, isPlaying: true);
+    state = SongState(
+      currentSong: state.currentSong,
+      isPlaying: true,
+      playCount: state.playCount,
+      totalPlayTime: state.totalPlayTime,
+    );
     await _player.play();
   }
 
   void pause() async {
-    state = SongState(currentSong: state.currentSong, isPlaying: false);
+    state = SongState(
+      currentSong: state.currentSong,
+      isPlaying: false,
+      playCount: state.playCount,
+      totalPlayTime: state.totalPlayTime + _currentPlayTime,
+    );
     await _player.pause();
   }
+
   void playPreviousSong() async {
     if (_songQueue.isEmpty) return;
+
+    final currentSong = state.currentSong;
+    if (currentSong != null) {
+      // Update play count and total play time for the current song
+      state = SongState(
+        currentSong: currentSong,
+        isPlaying: false,
+        playCount: state.playCount + 1,
+        totalPlayTime: state.totalPlayTime + _currentPlayTime,
+      );
+    }
 
     _currentIndex = (_currentIndex - 1 + _songQueue.length) % _songQueue.length; // Ensure index wraps around
     final previousSong = _songQueue[_currentIndex];

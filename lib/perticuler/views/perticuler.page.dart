@@ -343,6 +343,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
     }
     // Ensure state modification ha ppens outside of the widget lifecycle methods
     if (mediaList.isNotEmpty) {
+      // ref.read(songStateProvider.notifier).stopSong();
       ref.read(songStateProvider.notifier).addToQueue(mediaList);
       ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
       startTimer();
@@ -407,23 +408,25 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             InkWell(
-                child: Icon(
+                child:const Icon(
                   Icons.shuffle,
                   color: Colors.white,
                 ),
-                onTap: () {}),
+                onTap: () {
+                  songController.shuffle();
+                }),
             Row(
               children: [
                 GestureDetector(
                   onTap: (){
                      songController.playPreviousSong();
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.fast_rewind,
                     color: Colors.white,
                   ),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 GestureDetector(
                   onTap: (){
                     if(songState.isPlaying == true){
@@ -435,7 +438,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   child: Container(
                     width: 60,
                     height: 60,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
@@ -452,12 +455,12 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                     ),
                   ),
                 ),
-                SizedBox(width: 20),
+                const SizedBox(width: 20),
                 GestureDetector(
                   onTap: (){
                     songController.playNextSong();
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.fast_forward,
                     color: Colors.white,
                   ),
@@ -465,7 +468,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               ],
             ),
             InkWell(
-                child: Icon(
+                child: const Icon(
                   Icons.toc,
                   color: Colors.white,
                 ),
@@ -477,9 +480,14 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
   }
 
   Widget _homeBody() {
+
      final songController = ref.read(songStateProvider.notifier);
-   
+        
     final songState = ref.watch(songStateProvider);
+    final currentSong = songState.currentSong;
+
+    final duration = currentSong?.duration ?? Duration.zero;
+    log(duration.inSeconds.toString());
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -491,15 +499,17 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               Container(
                 width: 275,
                 height: 390,
+               
                 decoration: BoxDecoration(
-                  boxShadow: [
+                   color: Colors.black,
+                  boxShadow: const [
                     BoxShadow(
                       color: Colors.white30,
                       offset: Offset(0, 20),
                       blurRadius: 30,
                     ),
                   ],
-                  borderRadius: BorderRadius.only(
+                  borderRadius: const BorderRadius.only(
                     bottomLeft: Radius.circular(200),
                     bottomRight: Radius.circular(200),
                   ),
@@ -518,8 +528,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 left: -40,
                 child: SleekCircularSlider(
                   min: 0, // Song start time
-                  max: maxTime, // Song end time (duration)
-                  initialValue: currentTime, // Current playback position
+                  max: 250, // Song end time (duration)
+                  initialValue: 250, // Current playback position
                   appearance: CircularSliderAppearance(
                     size: 360,
                     counterClockwise: true,
@@ -535,7 +545,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                       progressBarColor: Colors.white,
                     ),
                     infoProperties: InfoProperties(
-                      mainLabelStyle: TextStyle(
+                      mainLabelStyle: const TextStyle(
                         color: Colors.white,
                       ),
                       modifier: (double value) {
@@ -553,7 +563,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               ),
             ],
           ),
-          SizedBox(
+          const SizedBox(
             height: 60,
           ),
           Column(
@@ -567,7 +577,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              SizedBox(height: 15),
+             const SizedBox(height: 15),
               Text(
                 songState.currentSong!.artist.toString(),
                 style: GoogleFonts.lato(
@@ -576,7 +586,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              SizedBox(height: 10),
+             const  SizedBox(height: 10),
             ],
           ),
           Center(
@@ -623,7 +633,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 size: 35, // Size of the heart icon
                 color: isFavorite
                     ? Colors.red
-                    : Colors.grey, // Change color on tap
+                    : Colors.grey.shade600, // Change color on tap
               ),
             ),
           ),

@@ -28,14 +28,18 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  int pageIndex = 0;
-  List<Widget> pages = [const HomeSection(), const SearchPage()];
+
+  
   bool isExapnded = false;
   @override
   Widget build(BuildContext context) {
     final songState = ref.watch(songStateProvider);
- 
-
+    final pageIndex = ref.watch(homePageNavigatorIndex.notifier).state;
+    List<Widget> pages = [ HomeSection(
+    callback: (value){
+     Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPage()));
+    },
+  ), const SearchPage()];
     return Scaffold(
       backgroundColor: Colors.black,
       body: pages[pageIndex],
@@ -172,7 +176,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                pageIndex = 0;
+                                ref.read(homePageNavigatorIndex.notifier).state = 0;
                                 isExapnded = false;
                               });
                             },
@@ -189,7 +193,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                pageIndex = 1;
+                                ref.read(homePageNavigatorIndex.notifier).state = 1;
+                                ref.read(homeArtisittoSearchPageProvider.notifier).state = null;
                                 isExapnded = false;
                               });
                             },
@@ -227,10 +232,12 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
+  
 }
 
 class HomeSection extends ConsumerStatefulWidget {
-  const HomeSection({super.key});
+  final Function callback;
+  const HomeSection( {required this.callback, super.key});
 
   @override
   _HomeSectionState createState() => _HomeSectionState();
@@ -445,7 +452,11 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                 width: width,
                 decoration: const BoxDecoration(color: Colors.black),
                 child: Artists(
-                  singernames: snapshot.data,
+                  singernames: snapshot.data, callBack: (value){
+                    ref.read(homePageNavigatorIndex.notifier).state = 1;
+                    ref.read(homeArtisittoSearchPageProvider.notifier).state = value;
+                    widget.callback(1);
+                  },
                 ),
               ),
               // Padding(

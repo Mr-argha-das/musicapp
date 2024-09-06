@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:musicproject/home/controller/home.controller.dart';
 import 'package:musicproject/recommended.dart/random.collor.dart';
 
-class Artists extends StatelessWidget {
+class Artists extends ConsumerStatefulWidget {
+  final Function callBack;
   final List<String> singernames;
-  const Artists({super.key, required this.singernames});
+  const Artists( {super.key, required this.callBack, required this.singernames});
 
+  @override
+  _ArtistsState createState() => _ArtistsState();
+}
+
+class _ArtistsState extends ConsumerState<Artists> {
   @override
   Widget build(BuildContext context) {
     // Retrieve screen width for responsive sizing
@@ -16,7 +24,7 @@ class Artists extends StatelessWidget {
 
     return ListView.builder(
       scrollDirection: Axis.horizontal,
-      itemCount: singernames.length,
+      itemCount: widget.singernames.length,
       itemBuilder: (context, index) {
         return Container(
           margin: const EdgeInsets.symmetric(
@@ -31,20 +39,26 @@ class Artists extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Container(
-                height: itemWidth * 0.90, // Circle size based on item width
-                width: itemWidth * 0.90,
-                decoration:  BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: generateRandomSoftColor(),
-                ),
-                child: Center(
-                  child: Text(
-                    "${singernames[index][0]}",
-                    style: TextStyle(
-                      fontSize: itemWidth * 0.65, // Responsive font size
-                      color: getContrastingTextColor(
-                                          generateRandomSoftColor()),
+              GestureDetector(
+                onTap: (){
+                widget.callBack(widget.singernames[index].toString());
+                 
+                },
+                child: Container(
+                  height: itemWidth * 0.90, // Circle size based on item width
+                  width: itemWidth * 0.90,
+                  decoration:  BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: generateRandomSoftColor(),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "${widget.singernames[index][0]}",
+                      style: TextStyle(
+                        fontSize: itemWidth * 0.65, // Responsive font size
+                        color: getContrastingTextColor(
+                                            generateRandomSoftColor()),
+                      ),
                     ),
                   ),
                 ),
@@ -52,7 +66,7 @@ class Artists extends StatelessWidget {
               const SizedBox(
                   height: 8), // Increased spacing for better visual appeal
               Text(
-                "${singernames[index]}",
+                "${widget.singernames[index]}",
                 style: TextStyle(
                   fontSize: itemWidth * 0.09, // Responsive font size
                   color: Colors.white,

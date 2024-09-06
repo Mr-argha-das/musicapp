@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:musicproject/home/moodels/singer.model.dart';
 import 'package:musicproject/home/moodels/song.search.model.dart';
@@ -38,3 +40,5 @@ class SongBySingerModel2{
   SongBySingerModel2({required this.name, required this.data});
 
 }
+final homeArtisittoSearchPageProvider = StateProvider<String?>((ref) => null);
+final homePageNavigatorIndex = StateProvider<int>((ref) => 0);
