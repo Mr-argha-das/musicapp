@@ -21,17 +21,13 @@ class SearchPage extends ConsumerStatefulWidget {
 
 class _SearchPageState extends ConsumerState<SearchPage> {
   final _searchController = TextEditingController();
+
+ 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
+  Widget build(BuildContext context) {
     if(ref.watch(homeArtisittoSearchPageProvider.notifier).state != null){
       _searchController.text = ref.watch(homeArtisittoSearchPageProvider.notifier).state.toString();
     }
-  }
-  @override
-  Widget build(BuildContext context) {
-    
     final searchresult = ref.watch(searchResultProvider(
         _searchController.text.isEmpty ? " | " : _searchController.text));
 
