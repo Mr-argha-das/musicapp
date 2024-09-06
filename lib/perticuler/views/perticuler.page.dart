@@ -523,6 +523,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   ),
                 ),
               ),
+              
               Positioned(
                 bottom: -45,
                 left: -40,
@@ -546,7 +547,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                     ),
                     infoProperties: InfoProperties(
                       mainLabelStyle: const TextStyle(
-                        color: Colors.white,
+                        color: Colors.transparent,
                       ),
                       modifier: (double value) {
                         return formatTime(
@@ -561,7 +562,15 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   },
                 ),
               ),
+              
             ],
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(formatTime(songState.currentPosition.inSeconds.toDouble()), style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 15
+                ),),
           ),
           const SizedBox(
             height: 60,
@@ -629,7 +638,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               duration: Duration(milliseconds: 300), // Animation duration
               curve: Curves.easeInOut, // Animation curve
               child: Icon(
-                Icons.favorite,
+               isFavorite? Icons.favorite: Icons.favorite_border_outlined,
                 size: 35, // Size of the heart icon
                 color: isFavorite
                     ? Colors.red
