@@ -14,13 +14,18 @@ import 'package:musicproject/home/moodels/songs.model.dart';
 import 'package:musicproject/home/service/home.service.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
+import 'package:musicproject/playlist/views/playlist.page.dart';
 import 'package:musicproject/recommended.dart/Likemore.dart';
 import 'package:musicproject/recommended.dart/SlowRock.dart';
-import 'package:musicproject/recommended.dart/albumList.dart';
+
 import 'package:musicproject/recommended.dart/artistList.dart';
 import 'package:musicproject/recommended.dart/recommended.dart';
 import 'package:musicproject/search/views/search.page.dart';
 
+
+class PageIndex{
+  static int pageIndex = 0;
+}
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -29,23 +34,29 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-
-  
   bool isExapnded = false;
+
+  List<Widget> pages = [
+      HomeSection(
+        callback: (value) {
+        //   Navigator.push(
+        //       context, CupertinoPageRoute(builder: (context) => SearchPage()));
+        // },
+        }
+      ),
+      const SearchPage(),
+      const PlaylistPage()
+    ];
   @override
   Widget build(BuildContext context) {
     final songState = ref.watch(songStateProvider);
-    final pageIndex = ref.watch(homePageNavigatorIndex.notifier).state;
-    List<Widget> pages = [ HomeSection(
-    callback: (value){
-     Navigator.push(context, CupertinoPageRoute(builder: (context) => SearchPage()));
-    },
-  ), const SearchPage()];
+
+    
     return Scaffold(
       backgroundColor: Colors.black,
-      body: pages[pageIndex],
+      body: pages[PageIndex.pageIndex],
       floatingActionButton: Container(
-        height: songState.currentSong == null 
+        height: songState.currentSong == null
             ? 72
             : isExapnded == true
                 ? 600
@@ -55,17 +66,16 @@ class _HomePageState extends ConsumerState<HomePage> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            if (isExapnded == true ) ...[
+            if (isExapnded == true) ...[
               SongAllTab(
                 callBack: () {
                   setState(() {
                     isExapnded = !isExapnded;
                   });
                 },
-             
               )
             ],
-            if (songState.currentSong != null ) ...[
+            if (songState.currentSong != null) ...[
               GestureDetector(
                 onTap: () {
                   setState(() {
@@ -177,7 +187,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                           child: GestureDetector(
                             onTap: () {
                               setState(() {
-                                ref.read(homePageNavigatorIndex.notifier).state = 0;
+                                PageIndex.pageIndex = 0;
                                 isExapnded = false;
                               });
                             },
@@ -193,9 +203,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
+                               ref
+                                    .read(homeArtisittoSearchPageProvider
+                                        .notifier)
+                                    .state = null;
                               setState(() {
-                                ref.read(homePageNavigatorIndex.notifier).state = 1;
-                                ref.read(homeArtisittoSearchPageProvider.notifier).state = null;
+                               
+                                PageIndex.pageIndex = 1;
+                                
                                 isExapnded = false;
                               });
                             },
@@ -207,12 +222,20 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                       ),
-                      const Expanded(
+                      Expanded(
                         child: Center(
-                          child: Icon(
-                            Icons.library_music_outlined,
-                            color: Colors.white,
-                            size: 28,
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                PageIndex.pageIndex = 2;
+                                isExapnded = false;
+                              });
+                            },
+                            child: Icon(
+                              Icons.library_music_outlined,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
                         ),
                       ),
@@ -233,12 +256,11 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
     );
   }
-  
 }
 
 class HomeSection extends ConsumerStatefulWidget {
   final Function callback;
-  const HomeSection( {required this.callback, super.key});
+  const HomeSection({required this.callback, super.key});
 
   @override
   _HomeSectionState createState() => _HomeSectionState();
@@ -453,10 +475,15 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                 width: width,
                 decoration: const BoxDecoration(color: Colors.black),
                 child: Artists(
-                  singernames: snapshot.data, callBack: (value){
+                  singernames: snapshot.data,
+                  callBack: (value) {
+                    
                     ref.read(homePageNavigatorIndex.notifier).state = 1;
-                    ref.read(homeArtisittoSearchPageProvider.notifier).state = value;
-                    widget.callback(1);
+                    ref.read(homeArtisittoSearchPageProvider.notifier).state =
+                        value;
+                    setState(() {
+                      PageIndex.pageIndex = 1;
+                    });
                   },
                 ),
               ),
@@ -494,7 +521,8 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                 physics: const NeverScrollableScrollPhysics(),
                 children: snapshot.data
                     .map((item) => SongsBySingerTab(
-                          singerName: item,
+                          image: item.image.toString(),
+                          singerName: item.name.toString(),
                         ))
                     .toList(),
               ),
@@ -567,7 +595,8 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
         );
       }, loading: () {
         return Center(
-          child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 40),
+          child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.white, size: 40),
         );
       }),
     );
@@ -576,7 +605,8 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
 
 class SongsBySingerTab extends ConsumerStatefulWidget {
   final String singerName;
-  const SongsBySingerTab({super.key, required this.singerName});
+  final String image;
+  const SongsBySingerTab({super.key, required this.singerName, required this.image});
 
   @override
   _SongsBySingerTabState createState() => _SongsBySingerTabState();
@@ -611,16 +641,12 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
               Container(
                 height: 45,
                 width: 45,
-                decoration: const BoxDecoration(
+                decoration:  BoxDecoration(
                   shape: BoxShape.circle,
                   color: Colors.white,
+                  image: DecorationImage(image: NetworkImage(widget.image), fit: BoxFit.cover)
                 ),
-                child: Center(
-                  child: Text(
-                    "${widget.singerName[0]}",
-                    style: TextStyle(color: Colors.black, fontSize: 24),
-                  ),
-                ),
+                
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -658,7 +684,8 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
                 width: width,
                 decoration: const BoxDecoration(color: Colors.black),
                 child: MoreLike(
-                  songslist: snapshot.data!.data, shortsinger: widget.singerName,
+                  songslist: snapshot.data!.data,
+                  shortsinger: widget.singerName,
                 ),
               );
             } else if (snapshot.hasError) {
@@ -739,7 +766,7 @@ class _SpiningCirculerContainerState extends State<SpiningCirculerContainer>
 class SongAllTab extends ConsumerStatefulWidget {
   final Function callBack;
 
-  const SongAllTab({ required this.callBack, super.key});
+  const SongAllTab({required this.callBack, super.key});
 
   @override
   _SongAllTabState createState() => _SongAllTabState();
@@ -833,7 +860,7 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                             width: 20,
                           ),
                           GestureDetector(
-                            onTap: (){
+                            onTap: () {
                               setState(() {
                                 songController.playPreviousSong();
                               });
@@ -863,11 +890,11 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                             width: 10,
                           ),
                           GestureDetector(
-                            onTap: (){
-                            log("hhey");
-                            setState(() {
-                              songController.playNextSong();
-                            });
+                            onTap: () {
+                              log("hhey");
+                              setState(() {
+                                songController.playNextSong();
+                              });
                             },
                             child: Container(
                               decoration: BoxDecoration(
@@ -900,12 +927,10 @@ class _SongAllTabState extends ConsumerState<SongAllTab> {
                           GestureDetector(
                             onTap: () {
                               if (songState.isPlaying == true) {
-                                
                                 setState(() {
                                   songController.pause();
                                 });
                               } else {
-                                
                                 setState(() {
                                   songController.resume();
                                 });

@@ -7,11 +7,11 @@ import 'package:retrofit/retrofit.dart';
 
 part 'home.service.g.dart';
 
-@RestApi(baseUrl: 'http://165.232.185.159:8000/')
+@RestApi(baseUrl: 'https://p5h8zcdp-8000.inc1.devtunnels.ms/')
 abstract class HomeSerivce {
   factory HomeSerivce(Dio dio) = _HomeSerivce;
-  @GET('api/v1/singer-list')
-  Future<SingerModel> singerList();
+  @GET('api/v1/get-artist')
+  Future<Artist> singerList();
   @POST('api/v1/get-song?limit=10&offset=0')
   Future<SongsBySingerModel> getSong(@Body() SongsBySingerModelbody body);
 }

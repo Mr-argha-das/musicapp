@@ -14,7 +14,7 @@ class _HomeSerivce implements HomeSerivce {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'http://165.232.185.159:8000/';
+    baseUrl ??= 'https://p5h8zcdp-8000.inc1.devtunnels.ms/';
   }
 
   final Dio _dio;
@@ -24,19 +24,19 @@ class _HomeSerivce implements HomeSerivce {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<SingerModel> singerList() async {
+  Future<Artist> singerList() async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<SingerModel>(Options(
+    final _options = _setStreamType<Artist>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          'api/v1/singer-list',
+          'api/v1/get-artist',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -46,9 +46,9 @@ class _HomeSerivce implements HomeSerivce {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late SingerModel _value;
+    late Artist _value;
     try {
-      _value = SingerModel.fromJson(_result.data!);
+      _value = Artist.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

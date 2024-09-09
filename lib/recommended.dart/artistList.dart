@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:musicproject/home/controller/home.controller.dart';
+import 'package:musicproject/home/moodels/singer.model.dart';
 import 'package:musicproject/recommended.dart/random.collor.dart';
 
 class Artists extends ConsumerStatefulWidget {
   final Function callBack;
-  final List<String> singernames;
-  const Artists( {super.key, required this.callBack, required this.singernames});
+
+  final List<Datum> singernames;
+  const Artists(  {super.key, required this.callBack, required this.singernames});
 
   @override
   _ArtistsState createState() => _ArtistsState();
@@ -47,26 +49,19 @@ class _ArtistsState extends ConsumerState<Artists> {
                 child: Container(
                   height: itemWidth * 0.90, // Circle size based on item width
                   width: itemWidth * 0.90,
-                  decoration:  BoxDecoration(
+                  decoration:   BoxDecoration(
                     shape: BoxShape.circle,
-                    color: generateRandomSoftColor(),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(widget.singernames[index].image.toString()))
                   ),
-                  child: Center(
-                    child: Text(
-                      "${widget.singernames[index][0]}",
-                      style: TextStyle(
-                        fontSize: itemWidth * 0.65, // Responsive font size
-                        color: getContrastingTextColor(
-                                            generateRandomSoftColor()),
-                      ),
-                    ),
-                  ),
+                  
                 ),
               ),
               const SizedBox(
                   height: 8), // Increased spacing for better visual appeal
               Text(
-                "${widget.singernames[index]}",
+                "${widget.singernames[index].name}",
                 style: TextStyle(
                   fontSize: itemWidth * 0.09, // Responsive font size
                   color: Colors.white,
