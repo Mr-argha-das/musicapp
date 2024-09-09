@@ -36,22 +36,22 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   bool isExapnded = false;
 
-  List<Widget> pages = [
+  
+  @override
+  Widget build(BuildContext context) {
+    final songState = ref.watch(songStateProvider);
+
+    List<Widget> pages = [
       HomeSection(
         callback: (value) {
-        //   Navigator.push(
-        //       context, CupertinoPageRoute(builder: (context) => SearchPage()));
-        // },
+          Navigator.push(
+              context, CupertinoPageRoute(builder: (context) => SearchPage()));
+        
         }
       ),
       const SearchPage(),
       const PlaylistPage()
     ];
-  @override
-  Widget build(BuildContext context) {
-    final songState = ref.watch(songStateProvider);
-
-    
     return Scaffold(
       backgroundColor: Colors.black,
       body: pages[PageIndex.pageIndex],
@@ -120,7 +120,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             children: [
                               Text(
                                 songState.currentSong!.title,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize:
                                       16, // Responsive font size for the title
                                   color: Colors.white,
@@ -481,9 +481,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                     ref.read(homePageNavigatorIndex.notifier).state = 1;
                     ref.read(homeArtisittoSearchPageProvider.notifier).state =
                         value;
-                    setState(() {
-                      PageIndex.pageIndex = 1;
-                    });
+                    widget.callback(1);
                   },
                 ),
               ),

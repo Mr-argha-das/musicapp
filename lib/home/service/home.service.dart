@@ -7,7 +7,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'home.service.g.dart';
 
-@RestApi(baseUrl: 'https://p5h8zcdp-8000.inc1.devtunnels.ms/')
+@RestApi(baseUrl: 'http://165.232.185.159:8000/')
 abstract class HomeSerivce {
   factory HomeSerivce(Dio dio) = _HomeSerivce;
   @GET('api/v1/get-artist')

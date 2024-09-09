@@ -43,7 +43,7 @@ class _ArtistsState extends ConsumerState<Artists> {
             children: [
               GestureDetector(
                 onTap: (){
-                widget.callBack(widget.singernames[index].toString());
+                widget.callBack(widget.singernames[index].name.toString());
                  
                 },
                 child: Container(
