@@ -343,14 +343,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
       }
     }
     // Ensure state modification ha ppens outside of the widget lifecycle methods
-    if (mediaList.isNotEmpty) {
-      // ref.read(songStateProvider.notifier).stopSong();
-      ref.read(songStateProvider.notifier).addToQueue(mediaList);
+   ref.read(songStateProvider.notifier).addToQueue(mediaList);
       ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
-      startTimer();
-    } else {
-      log("nhi hai");
-    }
   }
 
   // Starts the timer to simulate the song playback
