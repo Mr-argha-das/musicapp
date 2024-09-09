@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-class PlaylistPage extends StatefulWidget {
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:musicproject/home/controller/home.controller.dart';
+
+class PlaylistPage extends ConsumerStatefulWidget {
   const PlaylistPage({super.key});
 
   @override
-  State<PlaylistPage> createState() => _PlaylistPageState();
+  _PlaylistPageState createState() => _PlaylistPageState();
 }
 
-class _PlaylistPageState extends State<PlaylistPage> {
+class _PlaylistPageState extends ConsumerState<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
+    final _singerResult = ref.watch(homeSingerProvider);
     return Scaffold(
      appBar: AppBar(
       backgroundColor: Colors.black,
@@ -25,41 +30,59 @@ class _PlaylistPageState extends State<PlaylistPage> {
       decoration: const BoxDecoration(
         color: Colors.black,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              height: 200,
-              width: MediaQuery.of(context).size.width,
-              decoration:const BoxDecoration(
-                image: DecorationImage(image: AssetImage("assets/music.jpg"), fit: BoxFit.cover)
-              ),
-            ),
-            ListView.builder(
-              physics: NeverScrollableScrollPhysics(),
+      child: _singerResult.when(data: (snapshot){
+        return SingleChildScrollView(
+        child: ListView(
               shrinkWrap: true,
-              itemBuilder: (context, index){
-              return SizedBox(
-                height: 120,
-                width: MediaQuery.of(context).size.width,
-                child: Row(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    height: 100,
-                    width: 100,
-                    decoration: BoxDecoration(
-                      color: Colors.white
-                    ),
-                  )
-                ],
+              physics: NeverScrollableScrollPhysics(),
+              children: snapshot.data.map((item) => 
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SizedBox(
+                  height: 120,
+                  width: MediaQuery.of(context).size.width,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        height: 90,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(500),
+                          image: DecorationImage(image: NetworkImage(item.image.toString()), fit: BoxFit.cover)
+                        ),
+                      ),
+                      new SizedBox(
+                        width: 15,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(item.name.toString(), style: const TextStyle(
+                            color: Colors.white, 
+                            fontSize: 18
+                          ),),
+                          const Text("Artist", style: TextStyle(
+                            color: Colors.white54, 
+                            fontSize: 15
+                          ),)
+                        ],
+
+                      )
+                    ],
+                  ),
                 ),
-              );
-            })
-          ],
-        ),
-      ),
+              )
+              ).toList(),
+            )
+      );
+      }, error: (err, stack)=> Center(child: Text(err.toString()),), loading: () => Center(
+        child: LoadingAnimationWidget.staggeredDotsWave(
+              color: Colors.white, size: 40),
+        
+      ))
      ),
     );
   }
