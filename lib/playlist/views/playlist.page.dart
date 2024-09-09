@@ -32,7 +32,12 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
       ),
       child: _singerResult.when(data: (snapshot){
         return SingleChildScrollView(
-        child: ListView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            
+            ListView(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               children: snapshot.data.map((item) => 
@@ -76,7 +81,17 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                 ),
               )
               ).toList(),
-            )
+            ),
+            Container(
+              height: 200,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.black
+              ),
+              
+            ),
+          ],
+        ),
       );
       }, error: (err, stack)=> Center(child: Text(err.toString()),), loading: () => Center(
         child: LoadingAnimationWidget.staggeredDotsWave(
