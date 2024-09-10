@@ -41,11 +41,12 @@ class _PeticulerSongScrollableState
   @override
   Widget build(BuildContext context) {
     return PlaySongPage(
-      shortsinger: widget.shortSinger, 
-      image: widget.image, 
-      song: widget.song, 
-      name: widget.name, 
-      singer: widget.singer,);
+      shortsinger: widget.shortSinger,
+      image: widget.image,
+      song: widget.song,
+      name: widget.name,
+      singer: widget.singer,
+    );
   }
 }
 
@@ -315,6 +316,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
     _initialize();
     startTimer();
   }
+
   final service = HomeSerivce(createDio());
   Future<void> _initialize() async {
     // Use a Future to initialize data or perform actions
@@ -327,6 +329,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
       artUri: Uri.parse('${widget.image}'),
     );
     List<MediaItem> mediaList = [];
+    List<MediaItem> mediaList2 = [];
     SongsBySingerModel futureAlbum = await service
         .getSong(SongsBySingerModelbody(singername: widget.shortsinger));
     for (int i = 0; i < futureAlbum.data.length; i++) {
@@ -341,10 +344,20 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               artUri: Uri.parse(futureAlbum.data[i].image))
         ]);
       }
+      mediaList2.addAll([
+          MediaItem(
+              id: futureAlbum.data[i].image,
+              album: '',
+              title: futureAlbum.data[i].name,
+              artist: futureAlbum.data[i].singer,
+              extras: {'url': futureAlbum.data[i].songsaudio},
+              artUri: Uri.parse(futureAlbum.data[i].image))
+        ]);
     }
-    // Ensure state modification ha ppens outside of the widget lifecycle methods
-   ref.read(songStateProvider.notifier).addToQueue(mediaList);
-      ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
+    ref.read(songStateProvider.notifier).addToQueue(mediaList);
+    ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
+    ref.read(currentSongRecomandationProvider.notifier).remove();
+    ref.read(currentSongRecomandationProvider.notifier).setdata(mediaList2);
   }
 
   // Starts the timer to simulate the song playback
@@ -376,25 +389,27 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
   @override
   Widget build(BuildContext context) {
     final songController = ref.read(songStateProvider.notifier);
-   
+
     final songState = ref.watch(songStateProvider);
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.black,
       appBar: _homeAppBar(),
-      body: songState.currentSong == null ?  
-      Center(
-        child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 22),
-      )
-       :  _homeBody(),
+      body: songState.currentSong == null
+          ? Center(
+              child: LoadingAnimationWidget.staggeredDotsWave(
+                  color: Colors.white, size: 22),
+            )
+          : _homeBody(),
       bottomNavigationBar: homeBottomMenu(),
     );
   }
 
   SizedBox homeBottomMenu() {
     final songController = ref.read(songStateProvider.notifier);
-   
+
     final songState = ref.watch(songStateProvider);
+
     return SizedBox(
       height: 120,
       child: Padding(
@@ -403,7 +418,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             InkWell(
-                child:const Icon(
+                child: const Icon(
                   Icons.shuffle,
                   color: Colors.white,
                 ),
@@ -413,8 +428,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
             Row(
               children: [
                 GestureDetector(
-                  onTap: (){
-                     songController.playPreviousSong();
+                  onTap: () {
+                    songController.playPreviousSong();
                   },
                   child: const Icon(
                     Icons.fast_rewind,
@@ -423,10 +438,10 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
-                  onTap: (){
-                    if(songState.isPlaying == true){
+                  onTap: () {
+                    if (songState.isPlaying == true) {
                       songController.pause();
-                    }else{
+                    } else {
                       songController.resume();
                     }
                   },
@@ -444,7 +459,9 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                       ],
                     ),
                     child: Icon(
-                      songState.isPlaying == true?Icons.pause_circle_filled: Icons.play_arrow_rounded,
+                      songState.isPlaying == true
+                          ? Icons.pause_circle_filled
+                          : Icons.play_arrow_rounded,
                       color: Colors.white,
                       size: 60,
                     ),
@@ -452,7 +469,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 ),
                 const SizedBox(width: 20),
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     songController.playNextSong();
                   },
                   child: const Icon(
@@ -475,13 +492,14 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
   }
 
   Widget _homeBody() {
+    final songController = ref.read(songStateProvider.notifier);
 
-     final songController = ref.read(songStateProvider.notifier);
-        
     final songState = ref.watch(songStateProvider);
     final currentSong = songState.totalPlayTime;
 
     final duration = currentSong.inSeconds.toDouble();
+    // final recomandeationsog = ref.watch();
+    final songList = ref.watch(currentSongRecomandationProvider);
     log(duration.toString());
     return SingleChildScrollView(
       child: Column(
@@ -494,9 +512,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               Container(
                 width: 275,
                 height: 390,
-               
                 decoration: BoxDecoration(
-                   color: Colors.black,
+                  color: Colors.black,
                   boxShadow: const [
                     BoxShadow(
                       color: Colors.white30,
@@ -512,20 +529,18 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                     colorFilter:
                         ColorFilter.mode(primaryCol, BlendMode.multiply),
                     fit: BoxFit.cover,
-                    image: NetworkImage(
-                      songState.currentSong!.id
-                        ),
+                    image: NetworkImage(songState.currentSong!.id),
                   ),
                 ),
               ),
-              
               Positioned(
                 bottom: -45,
                 left: -40,
                 child: SleekCircularSlider(
                   min: 0, // Song start time
                   max: duration, // Song end time (duration)
-                  initialValue: songState.currentPosition.inSeconds.toDouble(), // Current playback position
+                  initialValue: songState.currentPosition.inSeconds
+                      .toDouble(), // Current playback position
                   appearance: CircularSliderAppearance(
                     size: 360,
                     counterClockwise: true,
@@ -557,15 +572,14 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   },
                 ),
               ),
-              
             ],
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(formatTime(songState.currentPosition.inSeconds.toDouble()), style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 15
-                ),),
+            child: Text(
+              formatTime(songState.currentPosition.inSeconds.toDouble()),
+              style: const TextStyle(color: Colors.white, fontSize: 15),
+            ),
           ),
           const SizedBox(
             height: 60,
@@ -581,7 +595,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-             const SizedBox(height: 15),
+              const SizedBox(height: 15),
               Text(
                 songState.currentSong!.artist.toString(),
                 style: GoogleFonts.lato(
@@ -590,16 +604,73 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   fontWeight: FontWeight.w400,
                 ),
               ),
-             const  SizedBox(height: 10),
             ],
           ),
-          Center(
-              child: Container(
-            height: MediaQuery.of(context).size.height * .3,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.transparent,
-            child: Center(child: LyricsScreen()),
-          ))
+          if (songList.data != null)
+            Center(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: songList.data!.length,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      return SizedBox(
+                        height: 80,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 65,
+                              width: 65,
+                              decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                          songList.data![index].id.toString()),
+                                      fit: BoxFit.cover)),
+                            ),
+                            new SizedBox(
+                              width: 15,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  songList.data![index].title.toString(),
+                                  style: const TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                                Text(
+                                  songList.data![index].artist.toString(),
+                                  style: TextStyle(
+                                      color: Colors.white54, fontSize: 11),
+                                )
+                              ],
+                            ),
+                            if (songState.currentSong!.id ==
+                                songList.data![index].id) ...[
+                              Expanded(
+                                  child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  LoadingAnimationWidget.staggeredDotsWave(
+                                      color: Colors.green, size: 28),
+                                  SizedBox(
+                                    width: 30,
+                                  )
+                                ],
+                              )),
+                            ]
+                          ],
+                        ),
+                      );
+                    })),
+          SizedBox(
+            height: 300,
+          )
         ],
       ),
     );
@@ -633,7 +704,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
               duration: Duration(milliseconds: 300), // Animation duration
               curve: Curves.easeInOut, // Animation curve
               child: Icon(
-               isFavorite? Icons.favorite: Icons.favorite_border_outlined,
+                isFavorite ? Icons.favorite : Icons.favorite_border_outlined,
                 size: 35, // Size of the heart icon
                 color: isFavorite
                     ? Colors.red

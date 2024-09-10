@@ -44,15 +44,15 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: SizedBox(
-                  height: 120,
+                  height: 80,
                   width: MediaQuery.of(context).size.width,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Container(
-                        height: 90,
-                        width: 90,
+                        height: 65,
+                        width: 65,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(500),
                           image: DecorationImage(image: NetworkImage(item.image.toString()), fit: BoxFit.cover)
@@ -67,11 +67,11 @@ class _PlaylistPageState extends ConsumerState<PlaylistPage> {
                         children: [
                           Text(item.name.toString(), style: const TextStyle(
                             color: Colors.white, 
-                            fontSize: 18
+                            fontSize: 17
                           ),),
                           const Text("Artist", style: TextStyle(
                             color: Colors.white54, 
-                            fontSize: 15
+                            fontSize: 14
                           ),)
                         ],
 
