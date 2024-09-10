@@ -582,7 +582,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
             ),
           ),
           const SizedBox(
-            height: 60,
+            height: 20,
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.end,
@@ -595,7 +595,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                   fontWeight: FontWeight.w600,
                 ),
               ),
-              const SizedBox(height: 15),
+              const SizedBox(height: 10),
               Text(
                 songState.currentSong!.artist.toString(),
                 style: GoogleFonts.lato(
@@ -656,8 +656,7 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  LoadingAnimationWidget.staggeredDotsWave(
-                                      color: Colors.green, size: 28),
+                                  Image.asset("assets/BHFO.gif"),
                                   SizedBox(
                                     width: 30,
                                   )
