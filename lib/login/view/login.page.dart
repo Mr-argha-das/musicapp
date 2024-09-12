@@ -64,7 +64,8 @@ class _MyButtonsState extends State<MyButtons> {
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Image.network("")
+            Image.network(widget.image),
+            Text(widget.title),
           ],
         ),
       ),
