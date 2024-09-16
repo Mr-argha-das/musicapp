@@ -95,67 +95,207 @@ class _PerticulerplaylistpageState
     // final recomandeationsog = ref.watch();
     final songList = ref.watch(currentSongRecomandationProvider);
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          leading: IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.arrow_back_ios,
+                color: Colors.white,
+              )),
+          centerTitle: true,
+          title: Text(
+            "Artist",
+            style: GoogleFonts.montserrat(
+                color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+        ),
         backgroundColor: Colors.black,
-        body: Stack(
-          alignment: AlignmentDirectional.topStart,
-          children: [
-            Container(
-              height: 250,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [_dominantColor, _secondaryColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+        body: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          child: ListView(
+          
+            scrollDirection: Axis.vertical,
+            children: [
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 150,
+                    width: 150,
+                    decoration: BoxDecoration(
+                        image: DecorationImage(
+                            image: NetworkImage(widget.image), fit: BoxFit.cover),
+                        color: Colors.grey.shade700,
+                        borderRadius: BorderRadius.circular(500)),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      widget.singer.toString(),
+                      overflow: TextOverflow.clip,
+                      style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 30,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 35,
+                    width: 123,
+                    decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.white)),
+                    child: Center(
+                      child: Center(
+                        child: Text(
+                          "Follow",
+                          overflow: TextOverflow.clip,
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(17.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(
+                      "POPULAR",
+                      overflow: TextOverflow.clip,
+                      style: GoogleFonts.montserrat(
+                          color: Colors.white,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w900),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  height: 250,
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          
-                          
-                          Expanded(
+              if (songList.data != null)
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: songList.data!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 0, right: 00),
+                          child: SizedBox(
+                            height: 80,
+                            width: MediaQuery.of(context).size.width,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
-                                Flexible(
-                                  child: Text(
-                                    widget.singer.toString(),
-                                    overflow: TextOverflow.clip,
-                                    style:  GoogleFonts.signika(
-                                        color: Colors.white, fontSize: 45, fontWeight: FontWeight.w900),
+                                Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: SizedBox(
+                                    width: 30,
+                                    child: Text(
+                                      "${index + 1}".toString(),
+                                      style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
+                                    ),
                                   ),
                                 ),
-                                
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Center(
+                                  child: Container(
+                                    height: 60,
+                                    width: 60,
+                                    decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(10),
+                                        image: DecorationImage(
+                                            image: NetworkImage(songList
+                                                .data![index].id
+                                                .toString()),
+                                            fit: BoxFit.cover)),
+                                  ),
+                                ),
+                                new SizedBox(
+                                  width: 15,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        songList.data![index].title.toString(),
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            color: Colors.white, fontSize: 16),
+                                      ),
+                                      Text(
+                                        songList.data![index].artist.toString(),
+                                        style: TextStyle(
+                                            color: Colors.white54, fontSize: 11),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                const Expanded(
+                                    child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.play_arrow_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(
+                                      width: 25,
+                                    ),
+                                    Icon(
+                                      Icons.graphic_eq_outlined,
+                                      color: Colors.greenAccent,
+                                    ),
+                                  ],
+                                )),
                               ],
                             ),
-                          )
-                        ],
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                    ],
-                  ),
+                          ),
+                        );
+                      }),
                 )
-              ],
-            )
-          ],
-        ));
+            ],
+          ),
+        )
+      );
   }
 }
 
@@ -221,71 +361,3 @@ class _PerticulerplaylistpageState
 //                   ),
 //                 ),
 //               ),
-//               if (songList.data != null)
-//                 Center(
-//                     child: ListView.builder(
-//                         shrinkWrap: true,
-//                         itemCount: songList.data!.length,
-//                         physics: const NeverScrollableScrollPhysics(),
-//                         itemBuilder: (context, index) {
-//                           return Padding(
-//                             padding: const EdgeInsets.only(left: 10, right: 20),
-//                             child: SizedBox(
-//                               height: 80,
-//                               width: MediaQuery.of(context).size.width,
-//                               child: Row(
-//                                 mainAxisAlignment: MainAxisAlignment.start,
-//                                 crossAxisAlignment: CrossAxisAlignment.center,
-//                                 children: [
-//                                   Container(
-//                                     height: 65,
-//                                     width: 65,
-//                                     decoration: BoxDecoration(
-//                                         borderRadius: BorderRadius.circular(10),
-//                                         image: DecorationImage(
-//                                             image: NetworkImage(songList
-//                                                 .data![index].id
-//                                                 .toString()),
-//                                             fit: BoxFit.cover)),
-//                                   ),
-//                                   new SizedBox(
-//                                     width: 15,
-//                                   ),
-//                                   Column(
-//                                     mainAxisAlignment: MainAxisAlignment.center,
-//                                     crossAxisAlignment:
-//                                         CrossAxisAlignment.start,
-//                                     children: [
-//                                       Text(
-//                                         songList.data![index].title.toString(),
-//                                         style: const TextStyle(
-//                                             color: Colors.white, fontSize: 16),
-//                                       ),
-//                                       Text(
-//                                         songList.data![index].artist.toString(),
-//                                         style: TextStyle(
-//                                             color: Colors.white54,
-//                                             fontSize: 11),
-//                                       )
-//                                     ],
-//                                   ),
-//                                   // if (songState.currentSong!.id ==
-//                                   //     songList.data![index].id) ...[
-//                                   //   Expanded(
-//                                   //       child: Row(
-//                                   //     mainAxisAlignment: MainAxisAlignment.end,
-//                                   //     crossAxisAlignment:
-//                                   //         CrossAxisAlignment.center,
-//                                   //     children: [
-//                                   //       Image.asset("assets/BHFO.gif"),
-//                                   //       SizedBox(
-//                                   //         width: 30,
-//                                   //       )
-//                                   //     ],
-//                                   //   )),
-//                                   // ]
-//                                 ],
-//                               ),
-//                             ),
-//                           );
-//                         })),
