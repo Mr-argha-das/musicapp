@@ -115,6 +115,32 @@ class SongStateNotifier extends StateNotifier<SongState> {
       print('Error playing song: $e');
     }
   }
+  void playQuaae(int index) async {
+    try {
+      final audioSource = AudioSource.uri(
+        Uri.parse(_songQueue[index].extras?['url'] ??
+                                                    ''),
+        tag: _songQueue[index],
+      );
+
+      await _player.setVolume(1.0);
+      await _player.setAudioSource(audioSource);
+      _player.play();
+      _player.durationStream.listen((duration) {
+        log("======================");
+        log(duration!.inSeconds.toString());
+        state = SongState(
+            currentSong: _songQueue[index],
+            isPlaying: true,
+            playCount: state.playCount,
+            totalPlayTime: duration,
+            currentPosition: _player.position,
+            songQueue: _songQueue);
+      });
+    } catch (e) {
+      print('Error playing song: $e');
+    }
+  }
 
   void shuffle() async {
     await _player.shuffle();

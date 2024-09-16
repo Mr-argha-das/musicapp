@@ -4,12 +4,16 @@ import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:marquee_text/marquee_text.dart';
 import 'package:musicproject/config/pretty.dio.dart';
 import 'package:musicproject/home/moodels/song.search.model.dart';
 import 'package:musicproject/home/moodels/songs.model.dart';
 import 'package:musicproject/home/service/home.service.dart';
+import 'package:musicproject/home/views/home.page.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:palette_generator/palette_generator.dart';
+
+import '../../home/controller/home.controller.dart';
 
 class Perticulerplaylistpage extends ConsumerStatefulWidget {
   final String singer;
@@ -31,7 +35,7 @@ class _PerticulerplaylistpageState
     _getImageDominantColor();
     _initialize();
   }
-
+   bool isExapnded = false;
   Future<void> _getImageDominantColor() async {
     final imageProvider = NetworkImage(widget.image.toString());
     final paletteGenerator = await PaletteGenerator.fromImageProvider(
@@ -79,7 +83,7 @@ class _PerticulerplaylistpageState
       ]);
     }
     ref.read(songStateProvider.notifier).addToQueue(mediaList);
-    // ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
+
     ref.read(currentSongRecomandationProvider.notifier).remove();
     ref.read(currentSongRecomandationProvider.notifier).setdata(mediaList2);
   }
@@ -114,7 +118,6 @@ class _PerticulerplaylistpageState
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
           child: ListView(
-          
             scrollDirection: Axis.vertical,
             children: [
               const SizedBox(
@@ -129,7 +132,8 @@ class _PerticulerplaylistpageState
                     width: 150,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage(widget.image), fit: BoxFit.cover),
+                            image: NetworkImage(widget.image),
+                            fit: BoxFit.cover),
                         color: Colors.grey.shade700,
                         borderRadius: BorderRadius.circular(500)),
                   ),
@@ -161,8 +165,27 @@ class _PerticulerplaylistpageState
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  GestureDetector(
+                    onTap: (){
+                      ref.read(songStateProvider.notifier).shuffle();
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white)),
+                      child: const Center(
+                        child: Center(child: Icon(Icons.shuffle)),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
                   Container(
-                    height: 35,
+                    height: 50,
                     width: 123,
                     decoration: BoxDecoration(
                         color: Colors.black,
@@ -178,6 +201,33 @@ class _PerticulerplaylistpageState
                               fontSize: 14,
                               fontWeight: FontWeight.w900),
                         ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 5,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (songState.currentSong == null) {
+                        ref.read(songStateProvider.notifier).playQuaae(0);
+                      } else {
+                        if (songState.isPlaying == true) {
+                          ref.read(songStateProvider.notifier).pause();
+                        } else {
+                          ref.read(songStateProvider.notifier).resume();
+                        }
+                      }
+                    },
+                    child: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: BoxDecoration(
+                          color: Colors.green,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.white)),
+                      child:  Center(
+                        child: Center(child: Icon(songState.isPlaying == true?  Icons.pause :Icons.play_arrow_rounded)),
                       ),
                     ),
                   ),
@@ -252,7 +302,8 @@ class _PerticulerplaylistpageState
                                 Expanded(
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         songList.data![index].title.toString(),
@@ -263,19 +314,27 @@ class _PerticulerplaylistpageState
                                       Text(
                                         songList.data![index].artist.toString(),
                                         style: TextStyle(
-                                            color: Colors.white54, fontSize: 11),
+                                            color: Colors.white54,
+                                            fontSize: 11),
                                       )
                                     ],
                                   ),
                                 ),
-                                const Expanded(
+                                Expanded(
                                     child: Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    Icon(
-                                      Icons.play_arrow_rounded,
-                                      color: Colors.white,
+                                    GestureDetector(
+                                      onTap: () {
+                                        ref
+                                            .read(songStateProvider.notifier)
+                                            .playQuaae(index);
+                                      },
+                                      child: Icon(
+                                      songState.currentSong?.id == songList.data?[index].id?  Icons.pause : Icons.play_arrow_rounded,
+                                        color: Colors.white,
+                                      ),
                                     ),
                                     SizedBox(
                                       width: 25,
@@ -294,8 +353,121 @@ class _PerticulerplaylistpageState
                 )
             ],
           ),
-        )
-      );
+        ),
+        
+        floatingActionButton: Container(
+        height: songState.currentSong == null
+            ? 72
+            : isExapnded == true
+                ? 600
+                : 150,
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            if (isExapnded == true) ...[
+              SongAllTab(
+                callBack: () {
+                  setState(() {
+                    isExapnded = !isExapnded;
+                  });
+                },
+              )
+            ],
+            if (songState.currentSong != null) ...[
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    isExapnded = !isExapnded;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black,
+                              spreadRadius: 1,
+                              blurRadius: 14,
+                              offset: Offset(4, 4))
+                        ],
+                        color: Colors.grey.shade900,
+                        borderRadius: BorderRadius.circular(500)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          const Expanded(
+                              child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Icon(
+                                  Icons.favorite_border,
+                                  color: Colors.white,
+                                ),
+                              )
+                            ],
+                          )),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                songState.currentSong!.title,
+                                style: const TextStyle(
+                                  fontSize:
+                                      16, // Responsive font size for the title
+                                  color: Colors.white,
+                                ),
+                                textAlign: TextAlign.left,
+                                overflow:
+                                    TextOverflow.fade, // Center-align text
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width - 150,
+                                child: MarqueeText(
+                                  alwaysScroll: true,
+                                  text: TextSpan(
+                                    text: songState.currentSong!.artist,
+                                  ),
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                  ),
+                                  speed: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SpiningCirculerContainer(
+                              height: 42,
+                              width: 42,
+                              imagepath: songState.currentSong!.id,
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            ],
+            new SizedBox(
+              height: 10,
+            ),
+            
+          ],
+        ),
+      ),
+        );
   }
 }
 
