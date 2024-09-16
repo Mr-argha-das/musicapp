@@ -87,7 +87,8 @@ class _PerticulerplaylistpageState
     ref.read(currentSongRecomandationProvider.notifier).remove();
     ref.read(currentSongRecomandationProvider.notifier).setdata(mediaList2);
   }
-
+  bool isPlaying = false;
+ 
   @override
   Widget build(BuildContext context) {
     final songController = ref.read(songStateProvider.notifier);
@@ -97,12 +98,20 @@ class _PerticulerplaylistpageState
 
     final duration = currentSong.inSeconds.toDouble();
     // final recomandeationsog = ref.watch();
+    
     final songList = ref.watch(currentSongRecomandationProvider);
+    //  for(int i = 0; i <songList.data!.length;){
+    //   if(songState.currentSong?.id == songList.data![i].id){
+    //     isExapnded = true;
+    //   }
+    //  }
     return Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.black,
           leading: IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+              },
               icon: Icon(
                 Icons.arrow_back_ios,
                 color: Colors.white,
@@ -173,11 +182,11 @@ class _PerticulerplaylistpageState
                       height: 50,
                       width: 50,
                       decoration: BoxDecoration(
-                          color: Colors.green,
+                          color: Colors.transparent,
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.white)),
                       child: const Center(
-                        child: Center(child: Icon(Icons.shuffle)),
+                        child: Center(child: Icon(Icons.shuffle, color: Colors.green,)),
                       ),
                     ),
                   ),
@@ -209,15 +218,7 @@ class _PerticulerplaylistpageState
                   ),
                   GestureDetector(
                     onTap: () {
-                      if (songState.currentSong == null) {
-                        ref.read(songStateProvider.notifier).playQuaae(0);
-                      } else {
-                        if (songState.isPlaying == true) {
-                          ref.read(songStateProvider.notifier).pause();
-                        } else {
-                          ref.read(songStateProvider.notifier).resume();
-                        }
-                      }
+                      ref.read(songStateProvider.notifier).playQuaae(0);
                     },
                     child: Container(
                       height: 50,
@@ -227,7 +228,7 @@ class _PerticulerplaylistpageState
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.white)),
                       child:  Center(
-                        child: Center(child: Icon(songState.isPlaying == true?  Icons.pause :Icons.play_arrow_rounded)),
+                        child: Center(child: Icon(isPlaying == true?  Icons.pause :Icons.play_arrow_rounded, size: 28,)),
                       ),
                     ),
                   ),
@@ -350,6 +351,8 @@ class _PerticulerplaylistpageState
                           ),
                         );
                       }),
+                ),SizedBox(
+                  height: 300,
                 )
             ],
           ),

@@ -63,6 +63,7 @@ class SongStateNotifier extends StateNotifier<SongState> {
   }
 
   void addToQueue(List<MediaItem> songs) {
+    _songQueue.clear();
     _songQueue.addAll(songs);
   }
 
