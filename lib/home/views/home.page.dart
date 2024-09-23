@@ -12,6 +12,7 @@ import 'package:musicproject/home/moodels/song.search.model.dart';
 import 'package:musicproject/home/controller/home.controller.dart';
 import 'package:musicproject/home/moodels/songs.model.dart';
 import 'package:musicproject/home/service/home.service.dart';
+import 'package:musicproject/lyrictosong/views/lyrics.to.song.page.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/perticuler/views/perticuler.page.dart';
 import 'package:musicproject/playlist/views/playlist.page.dart';
@@ -50,7 +51,8 @@ class _HomePageState extends ConsumerState<HomePage> {
         }
       ),
       const SearchPage(),
-      const PlaylistPage()
+      const PlaylistPage(),
+      const LyricsToSong(),
     ];
     return Scaffold(
       backgroundColor: Colors.black,
@@ -239,12 +241,20 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                       ),
-                      const Expanded(
-                        child: Center(
-                          child: Icon(
-                            Icons.person_2_outlined,
-                            color: Colors.white,
-                            size: 28,
+                       Expanded(
+                        child: GestureDetector(
+                          onTap: (){
+                            setState(() {
+                                PageIndex.pageIndex = 3;
+                                isExapnded = false;
+                              });
+                          },
+                          child: Center(
+                            child: Icon(
+                              Icons.headphones_outlined,
+                              color: Colors.white,
+                              size: 28,
+                            ),
                           ),
                         ),
                       ),

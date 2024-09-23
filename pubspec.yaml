@@ -56,6 +56,7 @@ dependencies:
   sleek_circular_slider: ^2.0.1
   loading_animation_widget: ^1.2.1
   palette_generator: ^0.3.3+4
+  speech_to_text: ^7.0.0
 
 
 dev_dependencies:
@@ -87,6 +88,9 @@ flutter:
     - assets/music.jpg
     - assets/icons8-audio-wave.gif
     - assets/BHFO.gif
+    - assets/circle.gif
+    - assets/blackhol.gif
+    - assets/circle.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
