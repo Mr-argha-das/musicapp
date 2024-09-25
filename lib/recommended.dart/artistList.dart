@@ -59,7 +59,7 @@ class _ArtistsState extends ConsumerState<Artists> {
                 ),
               ),
               const SizedBox(
-                  height: 8), // Increased spacing for better visual appeal
+                  height: 8), // Increased spartacing for better visual appeal
               Text(
                 "${widget.singernames[index].name}",
                 style: TextStyle(

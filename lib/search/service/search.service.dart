@@ -4,7 +4,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'search.service.g.dart';
 
-@RestApi(baseUrl: 'http://165.232.185.159:8000/')
+@RestApi(baseUrl: 'http://159.89.160.247:8080/')
 abstract class SearchService {
   factory SearchService(Dio dio) = _SearchService;
   @GET('api/v1/get-search/{query}')

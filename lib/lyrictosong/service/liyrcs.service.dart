@@ -8,7 +8,7 @@ import 'package:retrofit/retrofit.dart';
 
 part 'liyrcs.service.g.dart';
 
-@RestApi(baseUrl: 'https://p5h8zcdp-8080.inc1.devtunnels.ms/')
+@RestApi(baseUrl: 'http://159.89.160.247:8080/')
 abstract class LyrcisService {
   factory LyrcisService(Dio dio) = _LyrcisService;
   @GET('api/v1/search-song-by/{query}')

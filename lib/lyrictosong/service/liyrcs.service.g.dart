@@ -14,7 +14,7 @@ class _LyrcisService implements LyrcisService {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://p5h8zcdp-8080.inc1.devtunnels.ms/';
+    baseUrl ??= 'http://165.232.185.159:8888/';
   }
 
   final Dio _dio;

@@ -10,56 +10,76 @@ String lyrcsSOngResultToJson(LyrcsSOngResult data) => json.encode(data.toJson())
 
 class LyrcsSOngResult {
     String message;
-    Data? data;
-    bool staus;
+    List<Datum> data;
+    bool status;
 
     LyrcsSOngResult({
         required this.message,
         required this.data,
-        required this.staus,
+        required this.status,
     });
 
     factory LyrcsSOngResult.fromJson(Map<String, dynamic> json) => LyrcsSOngResult(
         message: json["message"],
-        data: Data.fromJson(json["data"]),
-        staus: json["staus"],
+        data: List<Datum>.from(json["data"].map((x) => Datum.fromJson(x))),
+        status: json["status"],
     );
 
     Map<String, dynamic> toJson() => {
         "message": message,
-        "data": data?.toJson(),
-        "staus": staus,
+        "data": List<dynamic>.from(data.map((x) => x.toJson())),
+        "status": status,
     };
 }
 
-class Data {
-    Songs songs;
+class Datum {
+    Id id;
+    String name;
+    String image;
+    String songsaudio;
+    String singer;
 
-    Data({
-        required this.songs,
+
+    Datum({
+        required this.id,
+        required this.name,
+        required this.image,
+        required this.songsaudio,
+        required this.singer,
+
     });
 
-    factory Data.fromJson(Map<String, dynamic> json) => Data(
-        songs: Songs.fromJson(json["songs"]),
+    factory Datum.fromJson(Map<String, dynamic> json) => Datum(
+        id: Id.fromJson(json["_id"]),
+        name: json["Name"],
+        image: json["image"],
+        songsaudio: json["songsaudio"],
+        singer: json["singer"],
+    
     );
 
     Map<String, dynamic> toJson() => {
-        "songs": songs.toJson(),
+        "_id": id.toJson(),
+        "Name": name,
+        "image": image,
+        "songsaudio": songsaudio,
+        "singer": singer,
+       
     };
 }
 
-class Songs {
-    String the0;
+class Id {
+    String oid;
 
-    Songs({
-        required this.the0,
+    Id({
+        required this.oid,
     });
 
-    factory Songs.fromJson(Map<String, dynamic> json) => Songs(
-        the0: json["0"],
+    factory Id.fromJson(Map<String, dynamic> json) => Id(
+        oid: json["\u0024oid"],
     );
 
     Map<String, dynamic> toJson() => {
-        "0": the0,
+        "\u0024oid": oid,
     };
 }
