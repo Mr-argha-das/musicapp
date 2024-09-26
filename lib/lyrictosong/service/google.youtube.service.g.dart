@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'liyrcs.service.dart';
+part of 'google.youtube.service.dart';
 
 // **************************************************************************
 // RetrofitGenerator
@@ -8,13 +8,13 @@ part of 'liyrcs.service.dart';
 
 // ignore_for_file: unnecessary_brace_in_string_interps,no_leading_underscores_for_local_identifiers,unused_element
 
-class _LyrcisService implements LyrcisService {
-  _LyrcisService(
+class _GoogleYouTubeService implements GoogleYouTubeService {
+  _GoogleYouTubeService(
     this._dio, {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'http://159.89.160.247:8080/';
+    baseUrl ??= 'https://www.googleapis.com/';
   }
 
   final Dio _dio;
@@ -24,19 +24,19 @@ class _LyrcisService implements LyrcisService {
   final ParseErrorLogger? errorLogger;
 
   @override
-  Future<LyrcsSOngResult> searchSong(String value) async {
+  Future<GoogleApiResponse> getSongByYoutube(String value) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
-    final _options = _setStreamType<LyrcsSOngResult>(Options(
+    final _options = _setStreamType<GoogleApiResponse>(Options(
       method: 'GET',
       headers: _headers,
       extra: _extra,
     )
         .compose(
           _dio.options,
-          'api/v1/ml-data/${value}',
+          'youtube/v3/search?part=snippet&q=${value}&type=video&key=AIzaSyAIZKkz_HoyU5cTQRB2Pp2V4QwcReNgR0U',
           queryParameters: queryParameters,
           data: _data,
         )
@@ -46,9 +46,9 @@ class _LyrcisService implements LyrcisService {
           baseUrl,
         )));
     final _result = await _dio.fetch<Map<String, dynamic>>(_options);
-    late LyrcsSOngResult _value;
+    late GoogleApiResponse _value;
     try {
-      _value = LyrcsSOngResult.fromJson(_result.data!);
+      _value = GoogleApiResponse.fromJson(_result.data!);
     } on Object catch (e, s) {
       errorLogger?.logError(e, s, _options);
       rethrow;

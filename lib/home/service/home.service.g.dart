@@ -14,7 +14,7 @@ class _HomeSerivce implements HomeSerivce {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'http://165.232.185.159:8888/';
+    baseUrl ??= 'http://159.89.160.247:8080/';
   }
 
   final Dio _dio;

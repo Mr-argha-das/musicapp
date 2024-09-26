@@ -11,7 +11,7 @@ part 'liyrcs.service.g.dart';
 @RestApi(baseUrl: 'http://159.89.160.247:8080/')
 abstract class LyrcisService {
   factory LyrcisService(Dio dio) = _LyrcisService;
-  @GET('api/v1/search-song-by/{query}')
+  @GET('api/v1/ml-data/{query}')
   Future<LyrcsSOngResult> searchSong(@Path("query") String value);
   
 }

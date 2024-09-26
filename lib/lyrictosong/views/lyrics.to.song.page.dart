@@ -11,6 +11,7 @@ import 'package:musicproject/lyrictosong/model/lyrcs.model.dart';
 import 'package:musicproject/lyrictosong/service/liyrcs.service.dart';
 import 'package:musicproject/lyrictosong/views/lyrics.resultpage.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
+import 'package:musicproject/search/controller/search.controller.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class LyricsToSong extends ConsumerStatefulWidget {
@@ -35,9 +36,8 @@ class _LyricsToSongState extends ConsumerState<LyricsToSong> {
           // Check if speech recognition stopped and run a function after speech
           if (val == 'done') {
             Future.delayed(Duration(seconds: 2), () {
-             songGet(mainValue);
+              songGet(mainValue);
             });
-            
           }
         },
         onError: (val) => log('onError: $val'),
@@ -136,7 +136,6 @@ class ResultPageSong extends ConsumerStatefulWidget {
 class _ResultPageSongState extends ConsumerState<ResultPageSong> {
   @override
   Widget build(BuildContext context) {
-    
     final speecResult = ref.watch(lyricssongProvider("${widget.value}"));
     final songController = ref.read(songStateProvider.notifier);
 
@@ -167,9 +166,11 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
     return Scaffold(
       backgroundColor: Colors.black,
       body: speecResult.when(
-
           data: (response) {
-            response?.data.shuffle();
+            final songAccordingSinger = ref.watch(searchResultProvider(
+                response!.data!.singer!.split('|').first.trim()));
+            final youtubeData =
+                ref.watch(gooleApiController(response.data!.name.toString()));
             return Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -179,115 +180,316 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    ListView.builder(
-                      shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: response!.data.length+1,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.only(left: 0, right: 00),
-                            child: SizedBox(
-                              height: 80,
-                              width: MediaQuery.of(context).size.width,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(10.0),
-                                    child: SizedBox(
-                                      width: 30,
-                                      child: Text(
-                                        "${index + 1}".toString(),
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.bold),
+                    SizedBox(
+                      height: 60,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: SizedBox(
+                        height: 200,
+                        width: MediaQuery.of(context).size.width,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              height: 150,
+                              width: 150,
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  image: DecorationImage(
+                                      image: NetworkImage(
+                                        response!.data!.image!,
                                       ),
+                                      fit: BoxFit.cover)),
+                              child: Center(
+                                child: Container(
+                                  height: 70,
+                                  width: 70,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white54,
+                                      borderRadius:
+                                          BorderRadius.circular(5000)),
+                                  child: Center(
+                                    child: Icon(
+                                      Icons.play_arrow,
+                                      color: Colors.black,
+                                      size: 40,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: 10,
-                                  ),
-                                  Center(
-                                    child: Container(
-                                      height: 60,
-                                      width: 60,
-                                      decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          image: DecorationImage(
-                                              image: NetworkImage(response
-                                                  .data![index].image
-                                                  .toString()),
-                                              fit: BoxFit.cover)),
-                                    ),
-                                  ),
-                                  new SizedBox(
-                                    width: 15,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          response.data![index].singer
-                                              .toString(),
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16),
-                                        ),
-                                        Text(
-                                          response.data[index].singer
-                                              .toString(),
-                                          style: TextStyle(
-                                              color: Colors.white54,
-                                              fontSize: 11),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  Expanded(
-                                      child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      // GestureDetector(
-                                      //   onTap: () {
-                                      //     ref
-                                      //         .read(songStateProvider.notifier)
-                                      //         .playQuaae(index);
-                                      //   },
-                                      //   child: Icon(
-                                         
-                                      //   ),
-                                      // ),
-                                      SizedBox(
-                                        width: 25,
-                                      ),
-                                      Icon(
-                                        Icons.graphic_eq_outlined,
-                                        color: Colors.greenAccent,
-                                      ),
-                                    ],
-                                  )),
-                                ],
+                                ),
                               ),
                             ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: Row(
+                        children: [
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Container(
+                            height: 40,
+                            width: 40,
+                            decoration: const BoxDecoration(
+                                color: Colors.black,
+                                image: DecorationImage(
+                                    image: AssetImage("assets/circle.gif"),
+                                    fit: BoxFit.contain)),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                response!.data!.name!,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                response!.data!.singer!,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white60,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold),
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 40,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          "You will like this",
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    songAccordingSinger.when(data: (snapshot) {
+                      return ListView.builder(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true,
+                          itemCount: snapshot.data.length > 4
+                              ? 4
+                              : snapshot.data.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 0, right: 00),
+                              child: SizedBox(
+                                height: 80,
+                                width: MediaQuery.of(context).size.width,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: SizedBox(
+                                        width: 30,
+                                        child: Text(
+                                          "${index + 1}".toString(),
+                                          style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                    Center(
+                                      child: Container(
+                                        height: 60,
+                                        width: 60,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            image: DecorationImage(
+                                                image: NetworkImage(snapshot
+                                                    .data![index].image
+                                                    .toString()),
+                                                fit: BoxFit.cover)),
+                                      ),
+                                    ),
+                                    new SizedBox(
+                                      width: 15,
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            snapshot.data![index].name
+                                                .toString(),
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16),
+                                          ),
+                                          Text(
+                                            snapshot.data![index].singer
+                                                .toString(),
+                                            style: TextStyle(
+                                                color: Colors.white54,
+                                                fontSize: 11),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                        child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            ref
+                                                .read(
+                                                    songStateProvider.notifier)
+                                                .playQuaae(index);
+                                          },
+                                          child: Icon(
+                                            // checkSong(index)
+                                            Icons.play_arrow_rounded
+                                            // : Icons.play_arrow_rounded,
+                                            ,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 25,
+                                        ),
+                                        Icon(
+                                          Icons.graphic_eq_outlined,
+                                          color: Colors.greenAccent,
+                                        ),
+                                      ],
+                                    )),
+                                  ],
+                                ),
+                              ),
+                            );
+                          });
+                    }, error: (stack, eerr) {
+                      return Text("");
+                    }, loading: () {
+                      return LoadingAnimationWidget.staggeredDotsWave(
+                          color: Colors.white, size: 40);
+                    }),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    youtubeData.when(
+                        data: (value) {
+                          return Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Text(
+                                    "Youtube",
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.montserrat(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  height: 210,
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey.shade700,
+                                      image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(value.items[0]
+                                              .snippet.thumbnails.high.url)),
+                                      borderRadius: BorderRadius.circular(30)),
+                                      child: Center(
+                                        child: Container(
+                                          height: 50,
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black45,
+                                                spreadRadius: 1,
+                                                blurRadius: 12,
+                                                offset: Offset(4, 4)
+                                              )
+                                            ],
+                                            borderRadius: BorderRadius.circular(20),
+                                            image: DecorationImage(image: AssetImage("assets/youtube-6616310_1280.webp"), fit: BoxFit.contain)
+                                          ),
+                                        )
+                                      ),
+                                ),
+                              ),
+                              
+                              SizedBox(
+                                height: 200,
+                              ),
+                            ],
                           );
-                        })
+                        },
+                        error: (stack, err) {
+                          return Text("");
+                        },
+                        loading: () => SizedBox()),
                   ],
                 ),
               ),
             );
           },
           error: (stack, err) {
-            return Center(child: Text(err.toString(), style: TextStyle(color: Colors.white),));
+            return Center(
+                child: Text(
+              err.toString(),
+              style: TextStyle(color: Colors.white),
+            ));
           },
           loading: () => Center(
               child: LoadingAnimationWidget.staggeredDotsWave(

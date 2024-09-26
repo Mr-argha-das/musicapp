@@ -102,7 +102,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
                         songslist: snapshot.data,
                       ),
                   loading: () => Center(
-                        child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 40),
+                      child: LoadingAnimationWidget.staggeredDotsWave(color: Colors.white, size: 40),
                       ),
                   error: (err, stack) {
                     return Center(
