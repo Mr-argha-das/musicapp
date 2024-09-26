@@ -13,6 +13,7 @@ import 'package:musicproject/lyrictosong/views/lyrics.resultpage.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/search/controller/search.controller.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LyricsToSong extends ConsumerStatefulWidget {
   const LyricsToSong({super.key});
@@ -167,10 +168,13 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
       backgroundColor: Colors.black,
       body: speecResult.when(
           data: (response) {
+            final suggestionData =
+                ref.watch(suggestionSongs(response!.data!.singer!));
             final songAccordingSinger = ref.watch(searchResultProvider(
                 response!.data!.singer!.split('|').first.trim()));
             final youtubeData =
                 ref.watch(gooleApiController(response.data!.name.toString()));
+            
             return Container(
               height: MediaQuery.of(context).size.height,
               width: MediaQuery.of(context).size.width,
@@ -283,7 +287,7 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
                           width: 8,
                         ),
                         Text(
-                          "You will like this",
+                          "TOP SONG",
                           overflow: TextOverflow.ellipsis,
                           style: GoogleFonts.montserrat(
                               color: Colors.white,
@@ -423,7 +427,7 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
                                     width: 8,
                                   ),
                                   Text(
-                                    "Youtube",
+                                    "YOUTUBE",
                                     overflow: TextOverflow.ellipsis,
                                     style: GoogleFonts.montserrat(
                                         color: Colors.white,
@@ -437,40 +441,187 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  height: 210,
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                      color: Colors.grey.shade700,
-                                      image: DecorationImage(
-                                          fit: BoxFit.cover,
-                                          image: NetworkImage(value.items[0]
-                                              .snippet.thumbnails.high.url)),
-                                      borderRadius: BorderRadius.circular(30)),
-                                      child: Center(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    final url =
+                                        'https://www.youtube.com/watch?v=${value.items[0].id.videoId}'; // Replace with the actual video URL
+
+                                    await launchUrl(Uri.parse(url));
+                                  },
+                                  child: Container(
+                                    height: 210,
+                                    width: MediaQuery.of(context).size.width,
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey.shade700,
+                                        image: DecorationImage(
+                                            fit: BoxFit.cover,
+                                            image: NetworkImage(value.items[0]
+                                                .snippet.thumbnails.high.url)),
+                                        borderRadius:
+                                            BorderRadius.circular(30)),
+                                    child: Center(
                                         child: Container(
-                                          height: 50,
-                                          width: 70,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            boxShadow: const [
-                                              BoxShadow(
+                                      height: 50,
+                                      width: 70,
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: const [
+                                            BoxShadow(
                                                 color: Colors.black45,
                                                 spreadRadius: 1,
                                                 blurRadius: 12,
-                                                offset: Offset(4, 4)
-                                              )
-                                            ],
-                                            borderRadius: BorderRadius.circular(20),
-                                            image: DecorationImage(image: AssetImage("assets/youtube-6616310_1280.webp"), fit: BoxFit.contain)
-                                          ),
-                                        )
-                                      ),
+                                                offset: Offset(4, 4))
+                                          ],
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          image: const DecorationImage(
+                                              image: AssetImage(
+                                                  "assets/youtube-6616310_1280.webp"),
+                                              fit: BoxFit.contain)),
+                                    )),
+                                  ),
                                 ),
                               ),
-                              
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(
+                                    width: 8,
+                                  ),
+                                  Flexible(
+                                    child: Text(
+                                      value.items[0].snippet.title,
+                                      overflow: TextOverflow.clip,
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.montserrat(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ],
+                              ),
                               SizedBox(
-                                height: 200,
+                                height: 30,
+                              ),
+                              suggestionData.when(
+                                  data: (suggestion) {
+                                    return Column(
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          children: [
+                                            const SizedBox(
+                                              width: 8,
+                                            ),
+                                            Text(
+                                              "YOU MAY ALSO LIKE",
+                                              overflow: TextOverflow.ellipsis,
+                                              style: GoogleFonts.montserrat(
+                                                  color: Colors.white,
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 30,
+                                        ),
+                                        SizedBox(
+                                          height: 300,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          child: ListView.builder(
+                                              itemCount: suggestion.data.length,
+                                              scrollDirection: Axis.horizontal,
+                                              itemBuilder: (context, index) {
+                                                return Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: SizedBox(
+                                                    height: 280,
+                                                    width: 150,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .start,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Container(
+                                                          height: 150,
+                                                          width: 150,
+                                                          decoration: BoxDecoration(
+                                                              color:
+                                                                  Colors.grey,
+                                                              image: DecorationImage(
+                                                                  image: NetworkImage(
+                                                                      suggestion
+                                                                          .data[
+                                                                              index]
+                                                                          .image),
+                                                                  fit: BoxFit
+                                                                      .cover),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5)),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
+                                                        ),
+                                                        Flexible(
+                                                            child: Text(
+                                                          suggestion
+                                                              .data[index].name,
+                                                          overflow:
+                                                              TextOverflow.clip,
+                                                          textAlign:
+                                                              TextAlign.left,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 15),
+                                                        )),
+                                                        SizedBox(
+                                                          height: 2,
+                                                        ),
+                                                        Flexible(
+                                                            child: Text(
+                                                          suggestion.data[index]
+                                                              .singer,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .montserrat(
+                                                                  color: Colors
+                                                                      .grey,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 12),
+                                                        ))
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                  error: (stack, err) {
+                                    return SizedBox();
+                                  },
+                                  loading: () => SizedBox()),
+                              SizedBox(
+                                height: 50,
                               ),
                             ],
                           );
