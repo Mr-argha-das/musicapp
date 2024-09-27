@@ -8,6 +8,7 @@ import 'package:musicproject/home/views/home.page.dart';
 import 'package:musicproject/login/view/login.page.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
 import 'package:musicproject/selectSinger/views/selectsinger.dart';
+import 'package:musicproject/splash/splash.screen.dart';
 
 
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        home: HomePage(),
+        home: SplashScreen(),
       );
   }
 }
