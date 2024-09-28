@@ -9,10 +9,15 @@
       "client_info": {
         "mobilesdk_app_id": "1:69072610754:android:40d39d42292939b90ba25b",
         "android_client_info": {
-          "package_name": "com.example.musicproject"
+          "package_name": "com.example.app"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "69072610754-feml1bda5gnnr6vv2vi9sr6f1jou6riv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAZmMo0-37Qm0MUVgIWB9UlCJVWAQwrUh0"
@@ -20,7 +25,63 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69072610754-feml1bda5gnnr6vv2vi9sr6f1jou6riv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69072610754-60b87def9960rddoi2lkbbamclnnpm0l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.musicproject"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69072610754:android:652cf3082d6620790ba25b",
+        "android_client_info": {
+          "package_name": "com.example.musicproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69072610754-92s3q71mmnb1c00fg3gueubceprsv7vt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.musicproject",
+            "certificate_hash": "f0e3502ed17ddcbf8a1694b0b480ab3c2aa5f592"
+          }
+        },
+        {
+          "client_id": "69072610754-feml1bda5gnnr6vv2vi9sr6f1jou6riv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZmMo0-37Qm0MUVgIWB9UlCJVWAQwrUh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69072610754-feml1bda5gnnr6vv2vi9sr6f1jou6riv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69072610754-60b87def9960rddoi2lkbbamclnnpm0l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.musicproject"
+              }
+            }
+          ]
         }
       }
     }
