@@ -8,6 +8,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:marquee_text/marquee_text.dart';
 import 'package:marquee_text/vertical_marquee_text.dart';
 import 'package:musicproject/config/pretty.dio.dart';
+import 'package:musicproject/config/userstorage/usersavedata.dart';
 import 'package:musicproject/home/moodels/song.search.model.dart';
 import 'package:musicproject/home/controller/home.controller.dart';
 import 'package:musicproject/home/moodels/songs.model.dart';
@@ -284,6 +285,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
     final _singerResult = ref.watch(homeSingerProvider);
     final songState = ref.watch(songStateProvider);
     final songController = ref.read(songStateProvider.notifier);
+    final userSavedata = ref.watch(userProvider);
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: true,
@@ -318,40 +320,19 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 20,
+              ),
               Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                child: Container(
-                  height: height * 0.10,
-                  width: width * 0.9,
-                  decoration: const BoxDecoration(
-                    color: Colors.black,
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 50,
-                          width: 50,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 15),
-                          child: Text(
-                            "Hey Hey Hey",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                padding: const EdgeInsets.only(left: 20),
+                child: Text("HELLO", style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20),
+                child: Text(userSavedata!.username.toUpperCase(), style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),),
+              ),
+               SizedBox(
+                height: 20,
               ),
               if (songState.currentSong != null) ...[
                 Padding(
