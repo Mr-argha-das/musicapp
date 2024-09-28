@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "69072610754",
+    "project_id": "sarround-a877b",
+    "storage_bucket": "sarround-a877b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69072610754:android:40d39d42292939b90ba25b",
+        "android_client_info": {
+          "package_name": "com.example.musicproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZmMo0-37Qm0MUVgIWB9UlCJVWAQwrUh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

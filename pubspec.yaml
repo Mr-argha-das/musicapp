@@ -59,6 +59,9 @@ dependencies:
   speech_to_text: ^7.0.0
   url_launcher: ^6.3.0
   animated_text_kit: ^4.2.2
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  google_sign_in: ^6.2.1
 
 
 dev_dependencies:
@@ -94,6 +97,8 @@ flutter:
     - assets/blackhol.gif
     - assets/circle.png
     - assets/youtube-6616310_1280.webp
+    - assets/googlelogi-removebg-preview.png
+    - assets/facebooklogo.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
