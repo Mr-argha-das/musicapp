@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:musicproject/config/userstorage/usersavedata.dart';
 import 'package:musicproject/home/controller/home.controller.dart';
 import 'package:musicproject/selectSinger/controller/selectsingerprovider.dart';
 
@@ -17,6 +18,7 @@ class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
   @override
   Widget build(BuildContext context) {
     final _singerResult = ref.watch(filteredItemsProvider);
+    final userSavedata = ref.watch(userProvider);
     return Scaffold(
       body: Container(
         height: MediaQuery.of(context).size.height,

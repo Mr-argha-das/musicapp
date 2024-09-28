@@ -11,6 +11,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:musicproject/config/pretty.dio.dart';
 import 'package:musicproject/config/userstorage/usersavedata.dart';
 import 'package:musicproject/home/views/home.page.dart';
+import 'package:musicproject/selectSinger/views/selectsinger.dart';
 import 'package:musicproject/splash/model/login.model.dart';
 import 'package:musicproject/splash/model/login.res.dart';
 import 'package:musicproject/splash/service/login.service.dart';
@@ -201,6 +202,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                                             image: " null ",
                                             loginby: "Google"));
                                        
+                                      }else{
+                                         Navigator.push(context, CupertinoPageRoute(builder: (context) => SelectSingerPage()));
                                       }
                                     } catch (e) {}
                                   }
