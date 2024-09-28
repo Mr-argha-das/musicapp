@@ -202,8 +202,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                                             image: " null ",
                                             loginby: "Google"));
                                        
-                                      }else{
+                                      }
+                                       if (res.message == "User create succes"){
                                          Navigator.push(context, CupertinoPageRoute(builder: (context) => SelectSingerPage()));
+                                         userController.saveUser(UserModel(
+                                            id: res.data[0].id.oid,
+                                            username: res.data[0].name,
+                                            emailorphone:
+                                                res.data[0].identifyer,
+                                            image: " null ",
+                                            loginby: "Google"));
                                       }
                                     } catch (e) {}
                                   }
