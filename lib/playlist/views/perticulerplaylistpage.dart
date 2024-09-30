@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:audio_service/audio_service.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,7 +11,9 @@ import 'package:musicproject/home/moodels/song.search.model.dart';
 import 'package:musicproject/home/moodels/songs.model.dart';
 import 'package:musicproject/home/service/home.service.dart';
 import 'package:musicproject/home/views/home.page.dart';
+import 'package:musicproject/lyrictosong/controller/lyrics.controller.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
+import 'package:musicproject/perticuler/views/perticuler.page.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 import '../../home/controller/home.controller.dart';
@@ -109,15 +112,19 @@ class _PerticulerplaylistpageState
     //  }
     bool checkSong(index) {
       bool value = false;
-      if (songState.currentSong!.id == songList.data![index].id &&
-          songState.isPlaying == true) {
-        value = true;
-      } else {
-        value = false;
+      if (songState.currentSong != null) {
+        if (songState.currentSong!.id == songList.data![index].id &&
+            songState.isPlaying == true) {
+          value = true;
+        } else {
+          value = false;
+        }
       }
+
       return value;
     }
 
+    final suggestionData = ref.watch(suggestionSongs(widget.singer));
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
@@ -393,14 +400,146 @@ class _PerticulerplaylistpageState
                       );
                     }),
               ),
-            if (expandesong == false) ...[Padding(
-              padding: const EdgeInsets.only(left: 17.0),
-              child: InkWell(
-                onTap: (){
-                  expandesong = true;
+            if (expandesong == false) ...[
+              Padding(
+                padding: const EdgeInsets.only(left: 17.0),
+                child: InkWell(
+                    onTap: () {
+                     setState(() {
+                        expandesong = true;
+                     });
+                    },
+                    child: Text(
+                      "SEE MORE",
+                      style: GoogleFonts.montserrat(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          fontSize: 15),
+                    )),
+              )
+            ],
+            SizedBox(
+              height: 30,
+            ),
+            suggestionData.when(
+                data: (suggestion) {
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const SizedBox(
+                            width: 16,
+                          ),
+                          Text(
+                            "YOU MAY ALSO LIKE",
+                            overflow: TextOverflow.ellipsis,
+                            style: GoogleFonts.montserrat(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: 30,
+                      ),
+                      SizedBox(
+                        height: 300,
+                        width: MediaQuery.of(context).size.width,
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: ListView.builder(
+                              itemCount: suggestion.data.length,
+                              scrollDirection: Axis.horizontal,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                  onTap: () {
+                                    ref
+                                        .read(songStateProvider.notifier)
+                                        .stopSong();
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) =>
+                                                PeticulerSongScrollable(
+                                                  id: suggestion
+                                                      .data[index].id.oid,
+                                                  image: suggestion
+                                                      .data[index].image,
+                                                  song: suggestion
+                                                      .data[index].songsaudio,
+                                                  name: suggestion
+                                                      .data[index].name,
+                                                  singer: suggestion
+                                                      .data[index].singer,
+                                                  shortSinger: widget.singer,
+                                                )));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SizedBox(
+                                      height: 280,
+                                      width: 150,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Container(
+                                            height: 150,
+                                            width: 150,
+                                            decoration: BoxDecoration(
+                                                color: Colors.grey.shade600,
+                                                image: DecorationImage(
+                                                    image: NetworkImage(
+                                                        suggestion
+                                                            .data[index].image),
+                                                    fit: BoxFit.cover),
+                                                borderRadius:
+                                                    BorderRadius.circular(5)),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Flexible(
+                                              child: Text(
+                                            suggestion.data[index].name,
+                                            overflow: TextOverflow.clip,
+                                            textAlign: TextAlign.left,
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 15),
+                                          )),
+                                          SizedBox(
+                                            height: 2,
+                                          ),
+                                          Flexible(
+                                              child: Text(
+                                            suggestion.data[index].singer,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.montserrat(
+                                                color: Colors.grey,
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 12),
+                                          ))
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }),
+                        ),
+                      ),
+                    ],
+                  );
                 },
-                child: Text("SEE MORE", style: GoogleFonts.montserrat(fontWeight: FontWeight.bold ,color: Colors.white, fontSize: 15),)),
-            )],
+                error: (stack, err) {
+                  return SizedBox();
+                },
+                loading: () => SizedBox()),
             SizedBox(
               height: 300,
             )

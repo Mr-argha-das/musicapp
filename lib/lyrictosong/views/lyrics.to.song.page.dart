@@ -11,6 +11,7 @@ import 'package:musicproject/lyrictosong/model/lyrcs.model.dart';
 import 'package:musicproject/lyrictosong/service/liyrcs.service.dart';
 import 'package:musicproject/lyrictosong/views/lyrics.resultpage.dart';
 import 'package:musicproject/perticuler/service/song.controller.dart';
+import 'package:musicproject/perticuler/views/perticuler.page.dart';
 import 'package:musicproject/search/controller/search.controller.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -536,78 +537,102 @@ class _ResultPageSongState extends ConsumerState<ResultPageSong> {
                                               itemCount: suggestion.data.length,
                                               scrollDirection: Axis.horizontal,
                                               itemBuilder: (context, index) {
-                                                return Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: SizedBox(
-                                                    height: 280,
-                                                    width: 150,
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .start,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Container(
-                                                          height: 150,
-                                                          width: 150,
-                                                          decoration: BoxDecoration(
-                                                              color:
-                                                                  Colors.grey,
-                                                              image: DecorationImage(
-                                                                  image: NetworkImage(
-                                                                      suggestion
-                                                                          .data[
-                                                                              index]
-                                                                          .image),
-                                                                  fit: BoxFit
-                                                                      .cover),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          5)),
-                                                        ),
-                                                        SizedBox(
-                                                          height: 10,
-                                                        ),
-                                                        Flexible(
-                                                            child: Text(
-                                                          suggestion
-                                                              .data[index].name,
-                                                          overflow:
-                                                              TextOverflow.clip,
-                                                          textAlign:
-                                                              TextAlign.left,
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 15),
-                                                        )),
-                                                        SizedBox(
-                                                          height: 2,
-                                                        ),
-                                                        Flexible(
-                                                            child: Text(
-                                                          suggestion.data[index]
-                                                              .singer,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style: GoogleFonts
-                                                              .montserrat(
-                                                                  color: Colors
-                                                                      .grey,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 12),
-                                                        ))
-                                                      ],
+                                                return GestureDetector(
+                                                  onTap: (){
+                                                     ref
+                                        .read(songStateProvider.notifier)
+                                        .stopSong();
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) =>
+                                                PeticulerSongScrollable(
+                                                  id: suggestion
+                                                      .data[index].id.oid,
+                                                  image: suggestion
+                                                      .data[index].image,
+                                                  song: suggestion
+                                                      .data[index].songsaudio,
+                                                  name: suggestion
+                                                      .data[index].name,
+                                                  singer: suggestion
+                                                      .data[index].singer,
+                                                  shortSinger: response!.data!.singer!.split('|').first.trim(),
+                                                )));
+                                                  },
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(8.0),
+                                                    child: SizedBox(
+                                                      height: 280,
+                                                      width: 150,
+                                                      child: Column(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .start,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Container(
+                                                            height: 150,
+                                                            width: 150,
+                                                            decoration: BoxDecoration(
+                                                                color:
+                                                                    Colors.grey.shade600,
+                                                                image: DecorationImage(
+                                                                    image: NetworkImage(
+                                                                        suggestion
+                                                                            .data[
+                                                                                index]
+                                                                            .image),
+                                                                    fit: BoxFit
+                                                                        .cover),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            5)),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                          ),
+                                                          Flexible(
+                                                              child: Text(
+                                                            suggestion
+                                                                .data[index].name,
+                                                            overflow:
+                                                                TextOverflow.clip,
+                                                            textAlign:
+                                                                TextAlign.left,
+                                                            style: GoogleFonts
+                                                                .montserrat(
+                                                                    color: Colors
+                                                                        .white,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: 15),
+                                                          )),
+                                                          SizedBox(
+                                                            height: 2,
+                                                          ),
+                                                          Flexible(
+                                                              child: Text(
+                                                            suggestion.data[index]
+                                                                .singer,
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
+                                                            style: GoogleFonts
+                                                                .montserrat(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize: 12),
+                                                          ))
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 );
