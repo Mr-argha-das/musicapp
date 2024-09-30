@@ -45,7 +45,6 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         showText = true;
       });
     });
-    
   }
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -84,13 +83,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Widget build(BuildContext context) {
     final userSavedata = ref.watch(userProvider);
     final userController = ref.watch(userProvider.notifier);
-    if(userSavedata != null){
+    if (userSavedata != null) {
       Future.delayed(Duration(seconds: 10), () {
-      Navigator.pushAndRemoveUntil(
-          context,
-          CupertinoPageRoute(builder: (context) => const HomePage()),
-          (routet) => false);
-    });
+        Navigator.pushAndRemoveUntil(
+            context,
+            CupertinoPageRoute(builder: (context) => const HomePage()),
+            (routet) => false);
+      });
     }
     return Scaffold(
       backgroundColor: Colors.black,
@@ -182,18 +181,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                                           await service.login(LoginModelBody(
                                               identifyer: user!.email!,
                                               name: user.displayName!,
-                                              mailorphone: user.email!)); 
-                                              setState(() {
-                                                _isLoading = true;
-                                              });
+                                              mailorphone: user.email!));
+                                      setState(() {
+                                        _isLoading = true;
+                                      });
 
                                       if (res.message == "User Login succes") {
                                         Navigator.pushAndRemoveUntil(
-                                              context,
-                                              CupertinoPageRoute(
-                                                  builder: (context) =>
-                                                      const HomePage()),
-                                              (routet) => false);
+                                            context,
+                                            CupertinoPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage()),
+                                            (routet) => false);
                                         userController.saveUser(UserModel(
                                             id: res.data[0].id.oid,
                                             username: res.data[0].name,
@@ -201,11 +200,16 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                                                 res.data[0].identifyer,
                                             image: " null ",
                                             loginby: "Google"));
-                                       
                                       }
-                                       if (res.message == "User create succes"){
-                                         Navigator.push(context, CupertinoPageRoute(builder: (context) => SelectSingerPage()));
-                                         userController.saveUser(UserModel(
+                                      if (res.message == "User create succes") {
+                                        Navigator.pushAndRemoveUntil(
+                                            context,
+                                            CupertinoPageRoute(
+                                                builder: (context) =>
+                                                    const SelectSingerPage()),
+                                            (routet) => false);
+
+                                        userController.saveUser(UserModel(
                                             id: res.data[0].id.oid,
                                             username: res.data[0].name,
                                             emailorphone:

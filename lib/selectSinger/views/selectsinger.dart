@@ -1,10 +1,17 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:musicproject/config/pretty.dio.dart';
 import 'package:musicproject/config/userstorage/usersavedata.dart';
 import 'package:musicproject/home/controller/home.controller.dart';
+import 'package:musicproject/home/views/home.page.dart';
 import 'package:musicproject/selectSinger/controller/selectsingerprovider.dart';
+import 'package:musicproject/selectSinger/model/delet.singer.res.dart';
+import 'package:musicproject/selectSinger/model/select.singer.body.dart';
+import 'package:musicproject/selectSinger/model/select.singer.response.dart';
+import 'package:musicproject/selectSinger/service/singer.select.service.dart';
 
 class SelectSingerPage extends ConsumerStatefulWidget {
   const SelectSingerPage({super.key});
@@ -15,6 +22,8 @@ class SelectSingerPage extends ConsumerStatefulWidget {
 
 class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
   final _searchController = TextEditingController();
+  List<SelectedSinger> selectSingerList = [];
+  final apiService = SelectSingerService(createDio());
   @override
   Widget build(BuildContext context) {
     final _singerResult = ref.watch(filteredItemsProvider);
@@ -29,7 +38,7 @@ class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 50,
               ),
               Padding(
@@ -102,7 +111,21 @@ class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
                   itemBuilder: (context, index) {
                     return SingerSelectTab(
                       image: _singerResult[index].image.toString(),
-                      name: _singerResult[index].name.toString(),
+                      name: _singerResult[index].name.toString(), callBack: (value) async {
+                        if(value == true){
+                          final SelectSingerResModel res = await apiService.addSingerUSer(SelectSingerModel(userid: userSavedata!.id, artistId: _singerResult[index].id!.oid.toString()));
+                          setState(() {
+                            selectSingerList.add(SelectedSinger(data: res, index: index));
+                          });
+                        }
+
+                        if(value == false){
+                          final DeleteSingerResModel res = await apiService.deletSingerUSer(selectSingerList[index].data.data.artistId, selectSingerList[index].data.data.userid);
+                          setState(() {
+                            selectSingerList.removeWhere((item) => item.index == index);
+                          });
+                        }
+                      },
                     );
                   },
                   padding: EdgeInsets.all(10.0), // Padding around the grid
@@ -112,17 +135,28 @@ class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
           ),
         ),
       ),
-      floatingActionButton: Container(
-        height: 60,
-        width: 60,
-        decoration: BoxDecoration(
-            color: const Color.fromARGB(255, 198, 28, 133),
-            borderRadius: BorderRadius.circular(500)),
-        child: const Center(
-          child: Icon(
-            Icons.next_plan_outlined,
-            color: Colors.white,
-            size: 55,
+      floatingActionButton: GestureDetector(
+        onTap: (){
+           Navigator.pushAndRemoveUntil(
+                                            context,
+                                            CupertinoPageRoute(
+                                                builder: (context) =>
+                                                    const HomePage()),
+                                            (routet) => false);
+
+        },
+        child: Container(
+          height: 60,
+          width: 60,
+          decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 198, 28, 133),
+              borderRadius: BorderRadius.circular(500)),
+          child: const Center(
+            child: Icon(
+              Icons.next_plan_outlined,
+              color: Colors.white,
+              size: 55,
+            ),
           ),
         ),
       ),
@@ -133,7 +167,8 @@ class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
 class SingerSelectTab extends StatefulWidget {
   final String name;
   final String image;
-  const SingerSelectTab({super.key, required this.name, required this.image});
+  final Function callBack;
+  const SingerSelectTab({super.key, required this.name, required this.image, required this.callBack});
 
   @override
   State<SingerSelectTab> createState() => _SingerSelectTabState();
@@ -155,6 +190,7 @@ class _SingerSelectTabState extends State<SingerSelectTab> {
                 setState(() {
                   isSelected = !isSelected;
                 });
+                widget.callBack(isSelected);
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 350),
@@ -181,4 +217,12 @@ class _SingerSelectTabState extends State<SingerSelectTab> {
           ],
         ));
   }
+}
+
+
+class SelectedSinger{
+  final int index;
+  final SelectSingerResModel data;
+
+  SelectedSinger({required this.index, required this.data});
 }
