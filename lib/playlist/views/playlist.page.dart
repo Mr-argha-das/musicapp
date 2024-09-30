@@ -16,7 +16,7 @@ class PlaylistPage extends ConsumerStatefulWidget {
 class _PlaylistPageState extends ConsumerState<PlaylistPage> {
   @override
   Widget build(BuildContext context) {
-    final _singerResult = ref.watch(homeSingerProvider);
+    final _singerResult = ref.watch(allSingerProvider);
     return Scaffold(
      appBar: AppBar(
       backgroundColor: Colors.black,

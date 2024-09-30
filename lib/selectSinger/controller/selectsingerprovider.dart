@@ -6,7 +6,7 @@ import 'package:musicproject/home/moodels/singer.model.dart';
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
 final filteredItemsProvider = Provider<List<Datum>>((ref) {
-  final items = ref.watch(homeSingerProvider);
+  final items = ref.watch(allSingerProvider);
   final query = ref.watch(searchQueryProvider).toLowerCase();
 
 

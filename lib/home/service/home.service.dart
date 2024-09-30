@@ -14,4 +14,7 @@ abstract class HomeSerivce {
   Future<Artist> singerList();
   @POST('api/v1/get-song?limit=10&offset=0')
   Future<SongsBySingerModel> getSong(@Body() SongsBySingerModelbody body);
+  @GET("api/v1/get-artist-by-userid/{userid}")
+  Future<Artist> usersingerList(@Path('userid') String userid);
+
 }

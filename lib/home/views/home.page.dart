@@ -280,12 +280,13 @@ class HomeSection extends ConsumerStatefulWidget {
 class _HomeSectionState extends ConsumerState<HomeSection> {
   @override
   Widget build(BuildContext context) {
+     final userSavedata = ref.watch(userProvider);
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
-    final _singerResult = ref.watch(homeSingerProvider);
+    final _singerResult = ref.watch(homeSingerProvider(userSavedata!.id));
     final songState = ref.watch(songStateProvider);
     final songController = ref.read(songStateProvider.notifier);
-    final userSavedata = ref.watch(userProvider);
+   
     return Scaffold(
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: true,
