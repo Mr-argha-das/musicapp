@@ -226,7 +226,7 @@ class _PerticulerplaylistpageState
                   child: Center(
                     child: Center(
                       child: Text(
-                        "Follow",
+                        "Following",
                         overflow: TextOverflow.clip,
                         style: GoogleFonts.montserrat(
                             color: Colors.white,
@@ -374,9 +374,17 @@ class _PerticulerplaylistpageState
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                      ref
+                                     if(songState.currentSong == null || songState.currentSong!.title != songList.data![index].title){
+                                       ref
                                           .read(songStateProvider.notifier)
                                           .playQuaae(index);
+                                     }
+                                     if (songState.isPlaying == true){
+                                      ref.read(songStateProvider.notifier).pause();
+                                     }
+                                     if(songState.isPlaying == false){
+                                      ref.read(songStateProvider.notifier).resume();
+                                     }
                                     },
                                     child: Icon(
                                       checkSong(index)
