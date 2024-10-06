@@ -125,7 +125,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         animatedTexts: [
                           TyperAnimatedText(
                             'SRROUND...',
-                            textStyle: GoogleFonts.montserrat(
+                            textStyle: GoogleFonts.heebo(
                               fontSize: 25.0,
                               fontWeight: FontWeight.bold,
                               color: Colors.white,

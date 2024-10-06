@@ -86,7 +86,7 @@ class _SelectSingerPageState extends ConsumerState<SelectSingerPage> {
                   ),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               if (_singerResult == null) ...[

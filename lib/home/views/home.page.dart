@@ -295,14 +295,14 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
           onPressed: () {
             _scaffoldKey.currentState?.openDrawer();
           },
-          icon: Icon(
+          icon: const Icon(
             Icons.menu_open_outlined,
             color: Colors.white,
             size: 30,
           ),
         ),
-        title: ListTile(
-          trailing: GestureDetector(
+        actions: [
+          GestureDetector(
             onTap: () {
               Navigator.push(
                   context,
@@ -316,11 +316,14 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
               size: 30,
             ),
           ),
-        ),
+          const SizedBox(width: 20,)
+        ],
       ),
-      drawer: Drawer(),
+      drawer: Drawer(
+        backgroundColor: Colors.white,
+      ),
       body: _singerResult.when(data: (snapshot) {
-        return SingleChildScrollView(
+        return SingleChildScrollView(   
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -681,26 +684,29 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
         ),
         const SizedBox(height: 20),
         FutureBuilder<SongsBySingerModel>(
-          future: futureAlbum,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              return Container(
-                height: height * 0.20,
-                width: width,
-                decoration: const BoxDecoration(color: Colors.black),
-                child: MoreLike(
-                  songslist: snapshot.data!.data,
-                  shortsinger: widget.singerName,
-                ),
-              );
-            } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
-            }
-
-            // By default, show a loading spinner.
-            return SizedBox();
-          },
-        ),
+            future: futureAlbum,
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                return Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: Container(
+                    height: 230,
+                    width: width,
+                    decoration: const BoxDecoration(color: Colors.black),
+                    child: MoreLike(
+                      songslist: snapshot.data!.data,
+                      shortsinger: widget.singerName,
+                    ),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                return Text('${snapshot.error}');
+              }
+          
+              // By default, show a loading spinner.
+              return SizedBox();
+            },
+          ),
         const SizedBox(height: 20),
       ],
     );
