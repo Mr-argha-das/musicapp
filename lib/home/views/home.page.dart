@@ -24,10 +24,10 @@ import 'package:musicproject/recommended.dart/artistList.dart';
 import 'package:musicproject/recommended.dart/recommended.dart';
 import 'package:musicproject/search/views/search.page.dart';
 
-
-class PageIndex{
+class PageIndex {
   static int pageIndex = 0;
 }
+
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
@@ -38,19 +38,15 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   bool isExapnded = false;
 
-  
   @override
   Widget build(BuildContext context) {
     final songState = ref.watch(songStateProvider);
 
     List<Widget> pages = [
-      HomeSection(
-        callback: (value) {
-          Navigator.push(
-              context, CupertinoPageRoute(builder: (context) => SearchPage()));
-        
-        }
-      ),
+      HomeSection(callback: (value) {
+        Navigator.push(
+            context, CupertinoPageRoute(builder: (context) => SearchPage()));
+      }),
       const SearchPage(),
       const PlaylistPage(),
       const LyricsToSong(),
@@ -206,14 +202,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                         child: Center(
                           child: GestureDetector(
                             onTap: () {
-                               ref
-                                    .read(homeArtisittoSearchPageProvider
-                                        .notifier)
-                                    .state = null;
+                              ref
+                                  .read(
+                                      homeArtisittoSearchPageProvider.notifier)
+                                  .state = null;
                               setState(() {
-                               
                                 PageIndex.pageIndex = 1;
-                                
+
                                 isExapnded = false;
                               });
                             },
@@ -242,13 +237,13 @@ class _HomePageState extends ConsumerState<HomePage> {
                           ),
                         ),
                       ),
-                       Expanded(
+                      Expanded(
                         child: GestureDetector(
-                          onTap: (){
+                          onTap: () {
                             setState(() {
-                                PageIndex.pageIndex = 3;
-                                isExapnded = false;
-                              });
+                              PageIndex.pageIndex = 3;
+                              isExapnded = false;
+                            });
                           },
                           child: Center(
                             child: Icon(
@@ -279,26 +274,34 @@ class HomeSection extends ConsumerStatefulWidget {
 
 class _HomeSectionState extends ConsumerState<HomeSection> {
   @override
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   Widget build(BuildContext context) {
-     final userSavedata = ref.watch(userProvider);
+    final userSavedata = ref.watch(userProvider);
     final double height = MediaQuery.of(context).size.height;
     final double width = MediaQuery.of(context).size.width;
     final _singerResult = ref.watch(homeSingerProvider(userSavedata!.id));
     final songState = ref.watch(songStateProvider);
     final songController = ref.read(songStateProvider.notifier);
-   
+
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.black,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 0,
-        title: ListTile(
-          leading: const Icon(
+        leading: IconButton(
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+          icon: Icon(
             Icons.menu_open_outlined,
             color: Colors.white,
             size: 30,
           ),
+        ),
+        title: ListTile(
           trailing: GestureDetector(
             onTap: () {
               Navigator.push(
@@ -315,6 +318,7 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
           ),
         ),
       ),
+      drawer: Drawer(),
       body: _singerResult.when(data: (snapshot) {
         return SingleChildScrollView(
           child: Column(
@@ -326,13 +330,25 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
-                child: Text("HELLO", style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),),
+                child: Text(
+                  "HELLO",
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30),
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.only(left: 20),
-                child: Text(userSavedata!.username.toUpperCase(), style: GoogleFonts.montserrat(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 30),),
+                child: Text(
+                  userSavedata!.username.toUpperCase(),
+                  style: GoogleFonts.montserrat(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30),
+                ),
               ),
-               SizedBox(
+              SizedBox(
                 height: 20,
               ),
               if (songState.currentSong != null) ...[
@@ -469,7 +485,6 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                 child: Artists(
                   singernames: snapshot.data,
                   callBack: (value) {
-                    
                     ref.read(homePageNavigatorIndex.notifier).state = 1;
                     ref.read(homeArtisittoSearchPageProvider.notifier).state =
                         value;
@@ -516,66 +531,66 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
                         ))
                     .toList(),
               ),
+              const SizedBox(height: 150),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 15),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       Text(
+              //         "Recommended for today",
+              //         style: TextStyle(
+              //           color: Colors.white,
+              //           fontSize: width * 0.05, // responsive font size
+              //         ),
+              //       ),
+              //       Icon(
+              //         Icons.keyboard_double_arrow_right_outlined,
+              //         color: Colors.blue.shade700,
+              //         size: width * 0.07, // responsive icon size
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   height: height * 0.22,
+              //   width: width,
+              //   decoration: const BoxDecoration(color: Colors.black),
+              //   child: const Recommended(),
+              // ),
               const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Recommended for today",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: width * 0.05, // responsive font size
-                      ),
-                    ),
-                    Icon(
-                      Icons.keyboard_double_arrow_right_outlined,
-                      color: Colors.blue.shade700,
-                      size: width * 0.07, // responsive icon size
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                height: height * 0.22,
-                width: width,
-                decoration: const BoxDecoration(color: Colors.black),
-                child: const Recommended(),
-              ),
-              const SizedBox(height: 20),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      "Slow Rock",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: width * 0.05, // responsive font size
-                      ),
-                    ),
-                    Icon(
-                      Icons.keyboard_double_arrow_right_outlined,
-                      color: Colors.blue.shade700,
-                      size: width * 0.07, // responsive icon size
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-              Container(
-                height: MediaQuery.of(context)
-                    .size
-                    .height, // Adjusted height for better fit
-                width: width,
-                decoration: const BoxDecoration(color: Colors.black),
-                child: const SlowRock(),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 15),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     crossAxisAlignment: CrossAxisAlignment.center,
+              //     children: [
+              //       Text(
+              //         "Slow Rock",
+              //         style: TextStyle(
+              //           color: Colors.white,
+              //           fontSize: width * 0.05, // responsive font size
+              //         ),
+              //       ),
+              //       Icon(
+              //         Icons.keyboard_double_arrow_right_outlined,
+              //         color: Colors.blue.shade700,
+              //         size: width * 0.07, // responsive icon size
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              // const SizedBox(height: 20),
+              // Container(
+              //   height: MediaQuery.of(context)
+              //       .size
+              //       .height, // Adjusted height for better fit
+              //   width: width,
+              //   decoration: const BoxDecoration(color: Colors.black),
+              //   child: const SlowRock(),
+              // ),
             ],
           ),
         );
@@ -596,7 +611,8 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
 class SongsBySingerTab extends ConsumerStatefulWidget {
   final String singerName;
   final String image;
-  const SongsBySingerTab({super.key, required this.singerName, required this.image});
+  const SongsBySingerTab(
+      {super.key, required this.singerName, required this.image});
 
   @override
   _SongsBySingerTabState createState() => _SongsBySingerTabState();
@@ -631,12 +647,11 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
               Container(
                 height: 45,
                 width: 45,
-                decoration:  BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.white,
-                  image: DecorationImage(image: NetworkImage(widget.image), fit: BoxFit.cover)
-                ),
-                
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    image: DecorationImage(
+                        image: NetworkImage(widget.image), fit: BoxFit.cover)),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),

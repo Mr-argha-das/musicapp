@@ -374,17 +374,23 @@ class _PerticulerplaylistpageState
                                 children: [
                                   GestureDetector(
                                     onTap: () {
-                                     if(songState.currentSong == null || songState.currentSong!.title != songList.data![index].title){
-                                       ref
-                                          .read(songStateProvider.notifier)
-                                          .playQuaae(index);
-                                     }
-                                     if (songState.isPlaying == true){
-                                      ref.read(songStateProvider.notifier).pause();
-                                     }
-                                     if(songState.isPlaying == false){
-                                      ref.read(songStateProvider.notifier).resume();
-                                     }
+                                      if (songState.currentSong == null ||
+                                          songState.currentSong!.title !=
+                                              songList.data![index].title) {
+                                        ref
+                                            .read(songStateProvider.notifier)
+                                            .playQuaae(index);
+                                      }
+                                      if (songState.isPlaying == true) {
+                                        ref
+                                            .read(songStateProvider.notifier)
+                                            .pause();
+                                      }
+                                      if (songState.isPlaying == false) {
+                                        ref
+                                            .read(songStateProvider.notifier)
+                                            .resume();
+                                      }
                                     },
                                     child: Icon(
                                       checkSong(index)
@@ -413,9 +419,9 @@ class _PerticulerplaylistpageState
                 padding: const EdgeInsets.only(left: 17.0),
                 child: InkWell(
                     onTap: () {
-                     setState(() {
+                      setState(() {
                         expandesong = true;
-                     });
+                      });
                     },
                     child: Text(
                       "SEE MORE",
