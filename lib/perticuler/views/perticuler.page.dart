@@ -345,14 +345,14 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
         ]);
       }
       mediaList2.addAll([
-          MediaItem(
-              id: futureAlbum.data[i].image,
-              album: '',
-              title: futureAlbum.data[i].name,
-              artist: futureAlbum.data[i].singer,
-              extras: {'url': futureAlbum.data[i].songsaudio},
-              artUri: Uri.parse(futureAlbum.data[i].image))
-        ]);
+        MediaItem(
+            id: futureAlbum.data[i].image,
+            album: '',
+            title: futureAlbum.data[i].name,
+            artist: futureAlbum.data[i].singer,
+            extras: {'url': futureAlbum.data[i].songsaudio},
+            artUri: Uri.parse(futureAlbum.data[i].image))
+      ]);
     }
     ref.read(songStateProvider.notifier).addToQueue(mediaList);
     ref.read(songStateProvider.notifier).playSong(mediaItem, widget.song);
@@ -620,6 +620,16 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: Text(
+                                "${index + 1}",
+                                style: GoogleFonts.montserrat(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ),
                             Container(
                               height: 65,
                               width: 65,
@@ -662,6 +672,25 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                                   )
                                 ],
                               )),
+                            ],
+                            if (songState.currentSong!.id !=
+                                songList.data![index].id) ...[
+                              Expanded(
+                                  child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  IconButton(
+                                      onPressed: () {},
+                                      icon: Icon(
+                                        Icons.play_arrow_rounded,
+                                        color: Colors.white,
+                                      )),
+                                  SizedBox(
+                                    width: 50,
+                                  )
+                                ],
+                              ))
                             ]
                           ],
                         ),

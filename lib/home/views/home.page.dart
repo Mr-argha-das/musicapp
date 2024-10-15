@@ -690,7 +690,7 @@ class _SongsBySingerTabState extends ConsumerState<SongsBySingerTab> {
                 return Padding(
                   padding: const EdgeInsets.only(left: 20.0),
                   child: Container(
-                    height: 230,
+                    height: 200,
                     width: width,
                     decoration: const BoxDecoration(color: Colors.black),
                     child: MoreLike(

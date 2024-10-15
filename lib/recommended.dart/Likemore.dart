@@ -53,15 +53,15 @@ class _MoreLikeState extends ConsumerState<MoreLike> {
                           )));
             },
             child: SizedBox(
-              height: 280,
-              width: 200,
+              height: 230,
+              width: 150,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CachedNetworkImage(
-                    height: 180,
-                    width: 180,
+                    height: 130,
+                    width: 130,
                     fit: BoxFit.cover,
                     imageUrl: widget.songslist[index].image,
                     placeholder: (context, url) => SizedBox(),
