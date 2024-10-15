@@ -1,8 +1,10 @@
 import 'dart:developer';
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:musicproject/lyrictosong/controller/lyrics.controller.dart';
 import 'package:sleek_circular_slider/sleek_circular_slider.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -498,6 +500,8 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
     final currentSong = songState.totalPlayTime;
 
     final duration = currentSong.inSeconds.toDouble();
+    final suggestionData =
+        ref.watch(suggestionSongs("${widget.singer} | adada"));
     // final recomandeationsog = ref.watch();
     final songList = ref.watch(currentSongRecomandationProvider);
     log(duration.toString());
@@ -696,6 +700,232 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                         ),
                       );
                     })),
+          suggestionData.when(
+              data: (suggestion) {
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          "YOU MAY ALSO LIKE",
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    SizedBox(
+                      height: 300,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                          itemCount: suggestion.data.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                ref.read(songStateProvider.notifier).stopSong();
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) =>
+                                            PeticulerSongScrollable(
+                                              id: suggestion.data[index].id.oid,
+                                              image:
+                                                  suggestion.data[index].image,
+                                              song: suggestion
+                                                  .data[index].songsaudio,
+                                              name: suggestion.data[index].name,
+                                              singer:
+                                                  suggestion.data[index].singer,
+                                              shortSinger: widget.shortsinger
+                                                  .split('|')
+                                                  .first
+                                                  .trim(),
+                                            )));
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: 280,
+                                  width: 150,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 150,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.shade600,
+                                            image: DecorationImage(
+                                                image: NetworkImage(suggestion
+                                                    .data[index].image),
+                                                fit: BoxFit.cover),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                        suggestion.data[index].name,
+                                        overflow: TextOverflow.clip,
+                                        textAlign: TextAlign.left,
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
+                                      )),
+                                      SizedBox(
+                                        height: 2,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                        suggestion.data[index].singer,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12),
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
+                );
+              },
+              error: (stack, err) {
+                return SizedBox();
+              },
+              loading: () => SizedBox()),
+          suggestionData.when(
+              data: (suggestion) {
+                return Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Text(
+                          "YOU MAY ALSO LIKE",
+                          overflow: TextOverflow.ellipsis,
+                          style: GoogleFonts.montserrat(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
+                    SizedBox(
+                      height: 300,
+                      width: MediaQuery.of(context).size.width,
+                      child: ListView.builder(
+                          itemCount: suggestion.data.length,
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                ref.read(songStateProvider.notifier).stopSong();
+                                Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) =>
+                                            PeticulerSongScrollable(
+                                              id: suggestion.data[index].id.oid,
+                                              image:
+                                                  suggestion.data[index].image,
+                                              song: suggestion
+                                                  .data[index].songsaudio,
+                                              name: suggestion.data[index].name,
+                                              singer:
+                                                  suggestion.data[index].singer,
+                                              shortSinger: widget.shortsinger
+                                                  .split('|')
+                                                  .first
+                                                  .trim(),
+                                            )));
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: SizedBox(
+                                  height: 280,
+                                  width: 150,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        height: 150,
+                                        width: 150,
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey.shade600,
+                                            image: DecorationImage(
+                                                image: NetworkImage(suggestion
+                                                    .data[index].image),
+                                                fit: BoxFit.cover),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
+                                      ),
+                                      SizedBox(
+                                        height: 10,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                        suggestion.data[index].name,
+                                        overflow: TextOverflow.clip,
+                                        textAlign: TextAlign.left,
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15),
+                                      )),
+                                      SizedBox(
+                                        height: 2,
+                                      ),
+                                      Flexible(
+                                          child: Text(
+                                        suggestion.data[index].singer,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.montserrat(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 12),
+                                      ))
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
+                          }),
+                    ),
+                  ],
+                );
+              },
+              error: (stack, err) {
+                return SizedBox();
+              },
+              loading: () => SizedBox()),
           SizedBox(
             height: 300,
           )
