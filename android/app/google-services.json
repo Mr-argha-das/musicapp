@@ -2,9 +2,45 @@
   "project_info": {
     "project_number": "69072610754",
     "project_id": "sarround-a877b",
-    "storage_bucket": "sarround-a877b.appspot.com"
+    "storage_bucket": "sarround-a877b.firebasestorage.app"
   },
   "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:69072610754:android:d761d4e79b059f610ba25b",
+        "android_client_info": {
+          "package_name": "com.avbigbuddy.musicproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "69072610754-feml1bda5gnnr6vv2vi9sr6f1jou6riv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZmMo0-37Qm0MUVgIWB9UlCJVWAQwrUh0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "69072610754-feml1bda5gnnr6vv2vi9sr6f1jou6riv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "69072610754-60b87def9960rddoi2lkbbamclnnpm0l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.musicproject"
+              }
+            }
+          ]
+        }
+      }
+    },
     {
       "client_info": {
         "mobilesdk_app_id": "1:69072610754:android:40d39d42292939b90ba25b",

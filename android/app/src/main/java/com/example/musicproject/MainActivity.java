@@ -1,4 +1,4 @@
-package com.example.musicproject;
+package com.avbigbuddy.musicproject;
 
 
 import com.ryanheise.audioservice.AudioServiceActivity;

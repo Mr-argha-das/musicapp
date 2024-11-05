@@ -492,8 +492,9 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
       ),
     );
   }
-
+  
   Widget _homeBody() {
+    
     final songController = ref.read(songStateProvider.notifier);
 
     final songState = ref.watch(songStateProvider);
@@ -505,6 +506,19 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
     // final recomandeationsog = ref.watch();
     final songList = ref.watch(currentSongRecomandationProvider);
     log(duration.toString());
+      bool checkSong(index) {
+      bool value = false;
+      if (songState.currentSong != null) {
+        if (songState.currentSong!.id == songList.data![index].id &&
+            songState.isPlaying == true) {
+          value = true;
+        } else {
+          value = false;
+        }
+      }
+
+      return value;
+    }
     return SingleChildScrollView(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -685,9 +699,29 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   IconButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        if (songState.currentSong == null ||
+                                            songState.currentSong!.title !=
+                                                songList.data![index].title) {
+                                          ref
+                                              .read(songStateProvider.notifier)
+                                              .playQuaae(index);
+                                        }
+                                        if (songState.isPlaying == true) {
+                                          ref
+                                              .read(songStateProvider.notifier)
+                                              .pause();
+                                        }
+                                        if (songState.isPlaying == false) {
+                                          ref
+                                              .read(songStateProvider.notifier)
+                                              .resume();
+                                        }
+                                      },
                                       icon: Icon(
-                                        Icons.play_arrow_rounded,
+                                        checkSong(index)
+                                          ? Icons.pause
+                                          : Icons.play_arrow_rounded ,
                                         color: Colors.white,
                                       )),
                                   SizedBox(
@@ -813,122 +847,6 @@ class _PlaySongPageState extends ConsumerState<PlaySongPage> {
                 return SizedBox();
               },
               loading: () => SizedBox()),
-          suggestionData.when(
-              data: (suggestion) {
-                return Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          "YOU MAY ALSO LIKE",
-                          overflow: TextOverflow.ellipsis,
-                          style: GoogleFonts.montserrat(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    SizedBox(
-                      height: 30,
-                    ),
-                    SizedBox(
-                      height: 300,
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                          itemCount: suggestion.data.length,
-                          scrollDirection: Axis.horizontal,
-                          itemBuilder: (context, index) {
-                            return GestureDetector(
-                              onTap: () {
-                                ref.read(songStateProvider.notifier).stopSong();
-                                Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) =>
-                                            PeticulerSongScrollable(
-                                              id: suggestion.data[index].id.oid,
-                                              image:
-                                                  suggestion.data[index].image,
-                                              song: suggestion
-                                                  .data[index].songsaudio,
-                                              name: suggestion.data[index].name,
-                                              singer:
-                                                  suggestion.data[index].singer,
-                                              shortSinger: widget.shortsinger
-                                                  .split('|')
-                                                  .first
-                                                  .trim(),
-                                            )));
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: SizedBox(
-                                  height: 280,
-                                  width: 150,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        height: 150,
-                                        width: 150,
-                                        decoration: BoxDecoration(
-                                            color: Colors.grey.shade600,
-                                            image: DecorationImage(
-                                                image: NetworkImage(suggestion
-                                                    .data[index].image),
-                                                fit: BoxFit.cover),
-                                            borderRadius:
-                                                BorderRadius.circular(5)),
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      Flexible(
-                                          child: Text(
-                                        suggestion.data[index].name,
-                                        overflow: TextOverflow.clip,
-                                        textAlign: TextAlign.left,
-                                        style: GoogleFonts.montserrat(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15),
-                                      )),
-                                      SizedBox(
-                                        height: 2,
-                                      ),
-                                      Flexible(
-                                          child: Text(
-                                        suggestion.data[index].singer,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.montserrat(
-                                            color: Colors.grey,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 12),
-                                      ))
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          }),
-                    ),
-                  ],
-                );
-              },
-              error: (stack, err) {
-                return SizedBox();
-              },
-              loading: () => SizedBox()),
-          SizedBox(
-            height: 300,
-          )
         ],
       ),
     );

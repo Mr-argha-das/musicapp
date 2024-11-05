@@ -49,35 +49,38 @@ class DefaultFirebaseOptions {
     messagingSenderId: '69072610754',
     projectId: 'sarround-a877b',
     authDomain: 'sarround-a877b.firebaseapp.com',
-    storageBucket: 'sarround-a877b.appspot.com',
+    storageBucket: 'sarround-a877b.firebasestorage.app',
     measurementId: 'G-6D6M3JZ9ZQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAZmMo0-37Qm0MUVgIWB9UlCJVWAQwrUh0',
-    appId: '1:69072610754:android:40d39d42292939b90ba25b',
+    appId: '1:69072610754:android:d761d4e79b059f610ba25b',
     messagingSenderId: '69072610754',
     projectId: 'sarround-a877b',
-    storageBucket: 'sarround-a877b.appspot.com',
-    androidClientId: 'com.example.musicproject'
-    
+    storageBucket: 'sarround-a877b.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyDcjxzRP7pSaoxoUCGmfSlO5EChLAou6Z4',
-    appId: '1:69072610754:ios:112dbb4296958dca0ba25b',
+    appId: '1:69072610754:ios:74f927a59b85b4330ba25b',
     messagingSenderId: '69072610754',
     projectId: 'sarround-a877b',
-    storageBucket: 'sarround-a877b.appspot.com',
-    iosBundleId: 'com.example.musicproject',
+    storageBucket: 'sarround-a877b.firebasestorage.app',
+    androidClientId: '69072610754-92s3q71mmnb1c00fg3gueubceprsv7vt.apps.googleusercontent.com',
+    iosClientId: '69072610754-fphvjt9q343gai67ptor7cqdkbgljrut.apps.googleusercontent.com',
+    iosBundleId: 'com.avbigbuddy.musicproject',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDcjxzRP7pSaoxoUCGmfSlO5EChLAou6Z4',
-    appId: '1:69072610754:ios:112dbb4296958dca0ba25b',
+    appId: '1:69072610754:ios:74f927a59b85b4330ba25b',
     messagingSenderId: '69072610754',
     projectId: 'sarround-a877b',
-    storageBucket: 'sarround-a877b.appspot.com',
-    iosBundleId: 'com.example.musicproject',
+    storageBucket: 'sarround-a877b.firebasestorage.app',
+    androidClientId: '69072610754-92s3q71mmnb1c00fg3gueubceprsv7vt.apps.googleusercontent.com',
+    iosClientId: '69072610754-fphvjt9q343gai67ptor7cqdkbgljrut.apps.googleusercontent.com',
+    iosBundleId: 'com.avbigbuddy.musicproject',
   );
+
 }
