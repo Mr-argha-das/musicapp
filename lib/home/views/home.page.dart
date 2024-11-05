@@ -23,6 +23,7 @@ import 'package:musicproject/recommended.dart/SlowRock.dart';
 import 'package:musicproject/recommended.dart/artistList.dart';
 import 'package:musicproject/recommended.dart/recommended.dart';
 import 'package:musicproject/search/views/search.page.dart';
+import 'package:musicproject/splash/splash.screen.dart';
 
 class PageIndex {
   static int pageIndex = 0;
@@ -320,7 +321,35 @@ class _HomeSectionState extends ConsumerState<HomeSection> {
         ],
       ),
       drawer: Drawer(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.black,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(
+              height: 100,
+            ),
+            GestureDetector(
+              onTap: () async {
+                final userController = ref.watch(userProvider.notifier);
+                await userController.clearUser();
+                Navigator.pushAndRemoveUntil(context, CupertinoPageRoute(builder: (context)=> SplashScreen()), (route)=> false);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 20,
+                  ),
+                  Icon(Icons.logout_outlined, color: Colors.white,),
+                  SizedBox(width: 10,),
+                  Text("Logout", style: GoogleFonts.montserrat(color: Colors.white, fontSize: 22),)
+                ],
+              ),
+            )
+          ],
+        ),
       ),
       body: _singerResult.when(data: (snapshot) {
         return SingleChildScrollView(   
